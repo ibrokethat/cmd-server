@@ -1,0 +1,24 @@
+# IDE litter
+.idea
+*.stTheme.cache
+*.sublime-workspace
+*.sublime-project
+# cache files for sublime text
+*.tmlanguage.cache
+*.tmPreferences.cache
+
+# Logs
+*.log
+
+# project specific
+node_modules
+
+# local config
+config/local.json
+config/me.json
+
+# certificates
+config/certificates
+
+# OSX files
+*.DS_Store

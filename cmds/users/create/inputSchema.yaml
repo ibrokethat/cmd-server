@@ -1,0 +1,47 @@
+---
+$schema: "http://json-schema.org/draft-04/schema#"
+
+type: object
+
+properties:
+
+  username:
+    type: string
+
+  password:
+    type: string
+
+  country_code:
+    type: string
+
+  phone_number:
+    type: string
+
+  first_name:
+    type: string
+
+  last_name:
+    type: string
+
+  profile_image:
+    type: string
+
+  biography:
+    type: string
+
+  date_of_birth:
+    type: string
+
+  email:
+    type: string
+    format: email
+
+required:
+  - username
+  - country_code
+  - phone_number
+  - first_name
+  - last_name
+  - profile_image
+#  - date_of_birth
+  - email

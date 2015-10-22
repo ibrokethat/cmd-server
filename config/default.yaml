@@ -1,0 +1,396 @@
+app:
+  port: 3000
+  global_request_timeout: 5000
+
+log:
+  ERROR: 1
+  INFO: 1
+  LOG: 1
+  WARN: 1
+  DEBUG: 1
+
+dbs:
+  -
+    alias: users
+    type: mongodb
+    connection:
+      pool: true
+      name: bubl-ng
+      port: 27017
+      #pwd: '$MONGODB_PASSWORD'
+      server: '127.0.0.1'
+      #user: '$MONGODB_PASSWORD'
+  -
+    alias: auth
+    type: mongodb
+    connection:
+      pool: true
+      name: bubl-ng
+      port: 27017
+      #pwd: '$MONGODB_PASSWORD'
+      server: '127.0.0.1'
+      #user: '$MONGODB_PASSWORD'
+
+
+paths:
+  cmds: '/cmds'
+  queries: '/lib/queries'
+  interceptors: '/lib/interceptors'
+  transformers: '/lib/transformers'
+
+apis:
+  # can be overidden on per api basis below
+  type: 'application/json'
+  paths:
+    # - path: '/assets/upload'
+    #   methods:
+    #     POST:
+    #       cmd: assets/upload
+    #       interceptors:
+    #         - auth/validate
+    #         - user/getCurrent
+
+    - path: '/auth/register'
+      methods:
+        POST:
+          cmd: 'users/create'
+          transformer: user
+
+
+    - path: '/auth/login'
+      methods:
+        POST:
+          cmd: 'auth/login'
+          transformer: loginSuccess
+
+
+    # - path: '/auth/activate'
+    #   methods:
+    #     GET:
+    #       cmd: auth/requestActivationCode
+    #     POST:
+    #       cmd: auth/activationUser
+
+
+    # - path: '/auth/devices'
+    #   methods:
+    #     POST:
+    #       cmd: user/updateDeviceSettings
+
+
+    # - path: '/auth/password/verify'
+    #   methods:
+    #     POST:
+    #       cmd: auth/verifyPassword
+
+
+    # - path: '/auth/password/change'
+    #   methods:
+    #     PATCH:
+    #       cmd: auth/changePassword
+    #       interceptors:
+    #         - auth/validate
+    #         - user/getCurrent
+
+
+    # - path: '/auth/phone/change'
+    #   methods:
+    #     PATCH:
+    #       cmd: auth/changePhoneNumber
+    #       interceptors:
+    #         - auth/validate
+    #         - user/getCurrent
+
+
+    # - path: '/auth/phone/available'
+    #   methods:
+    #     GET:
+    #       cmd: auth/verifyPhoneNumber
+    #       interceptors:
+    #         - auth/validate
+    #         - user/getCurrent
+
+
+    # - path: '/buttons/calls/:buttonId/:callState'
+    #   methods:
+    #     POST:
+    #       cmd: calls/callState
+    #       interceptors:
+    #         - auth/validate
+    #         - user/getCurrent
+
+
+    # - path: '/buttons/locations/:elementId/location'
+    #   methods:
+    #     PUT:
+    #       type: 'application/json'
+    #       cmd: buttons/addLocationTo
+    #     DEL:
+    #       cmd: buttons/removeLocationFrom
+    #       interceptors:
+    #         - auth/validate
+    #         - user/getCurrent
+
+
+    # - path: '/buttons/locations/:buttonId/interact'
+    #   methods:
+    #     PUT:
+    #       cmd: buttons/addLocationInteraction
+    #     DEL:
+    #       cmd: buttons/removeLocationInteraction
+    #       interceptors:
+    #         - auth/validate
+    #         - user/getCurrent
+
+
+    # - path: '/channels/:id'
+    #   methods:
+    #     GET:
+    #       cmd: channels/get
+    #       interceptors:
+    #         - auth/validate
+    #         - user/getCurrent
+
+
+    # - path: '/channels/:id/user/:userId'
+    #   methods:
+    #     GET:
+    #       cmd: bubls/getByUserId
+    #       interceptors:
+    #         - auth/validate
+    #         - user/getCurrent
+
+
+    # - path: '/channels/:id/bubls/:bublId'
+    #   methods:
+    #     GET:
+    #       cmd: bubls/getById
+    #       interceptors:
+    #         - auth/validate
+    #         - user/getCurrent
+    #     PUT:
+    #       cmd: bubls/create
+    #       requestParameters:
+    #         public: true
+    #       interceptors:
+    #         - auth/validate
+    #         - user/getCurrent
+    #     PATCH:
+    #       cmd: bubls/activate
+    #       interceptors:
+    #         - auth/validate
+    #         - user/getCurrent
+    #     DEL:
+    #       cmd: bubl/remove
+    #       interceptors:
+    #         - auth/validate
+    #         - user/getCurrent
+
+
+    # - path: '/channels/:id/bubls/:bublId/metaData'
+    #   methods:
+    #     GET:
+    #       cmd: bubl/getMetaDataById
+    #       interceptors:
+    #         - auth/validate
+    #         - user/getCurrent
+
+
+    # - path: '/channels/:id/bubls/:bublId/thumb'
+    #   methods:
+    #     GET:
+    #       cmd: bubl/getThumbById
+    #       interceptors:
+    #         - auth/validate
+    #         - user/getCurrent
+
+
+    # - path: '/channels/:id/bubls/:bublId/data'
+    #   methods:
+    #     GET:
+    #       cmd: bubl/getDataById
+    #       interceptors:
+    #         - auth/validate
+    #         - user/getCurrent
+
+
+    # - path: '/channels/:id/bubls/:bublId/sticker/:elementId'
+    #   methods:
+    #     POST:
+    #       cmd: bubl/uploadSticker
+    #       interceptors:
+    #         - auth/validate
+    #         - user/getCurrent
+
+
+    -
+      path: '/conversations'
+      methods:
+        # GET:
+        #   cmd: conversations/getAllforCurentUser
+        #   interceptors:
+        #     - auth/validate
+        #     - user/getCurrent
+        POST:
+          cmd: 'conversations/create'
+          interceptors:
+            - 'auth/validate'
+            - 'user/getCurrent'
+
+
+    # - path: '/conversations/:id'
+    #   methods:
+    #     GET:
+    #       cmd: conversations/get
+    #       interceptors:
+    #         - auth/validate
+    #         - user/getCurrent
+    #     POST:
+    #       cmd: conversations/update
+    #       interceptors:
+    #         - auth/validate
+    #         - user/getCurrent
+    #     PUT:
+    #       cmd: conversations/create
+    #       interceptors:
+    #         - auth/validate
+    #         - user/getCurrent
+    #     DEL:
+    #       cmd: conversations/removeSelfFrom
+    #       interceptors:
+    #         - auth/validate
+    #         - user/getCurrent
+
+
+    # - path: '/conversations/:id/users'
+    #   methods:
+    #     POST:
+    #       cmd: coversation/addParticipant
+    #       interceptors:
+    #         - auth/validate
+    #         - user/getCurrent
+    #     GET:
+    #       cmd: coversation/removeParticipant
+    #       interceptors:
+    #         - auth/validate
+    #         - user/getCurrent
+
+
+    # - path: '/conversations/:id/last_bubl_image'
+    #   methods:
+    #     GET:
+    #       cmd: bubl/renderLastImage
+    #       interceptors:
+    #         - auth/validate
+    #         - user/getCurrent
+    #     POST:
+
+
+    # - path: '/conversations/:id/bubls'
+    #   methods:
+    #     POST:
+    #       cmd: bubls/create
+    #       interceptors:
+    #         - auth/validate
+    #         - user/getCurrent
+
+
+    # - path: '/conversations/:id/bubls/:bublId'
+    #   methods:
+    #     GET:
+    #       cmd: bubls/getById
+    #       interceptors:
+    #         - auth/validate
+    #         - user/getCurrent
+    #     PUT:
+    #       cmd: bubls/create
+    #       requestParameters:
+    #         public: true
+    #       interceptors:
+    #         - auth/validate
+    #         - user/getCurrent
+
+
+    # - path: '/conversations/:id/bubls/:bublId/metaData'
+    #   methods:
+    #     GET:
+    #       cmd: bubl/getMetaDataById
+    #       interceptors:
+    #         - auth/validate
+    #         - user/getCurrent
+
+
+    # - path: '/conversations/:id/bubls/:bublId/thumb'
+    #   methods:
+    #     GET:
+    #       cmd: bubl/getThumbById
+    #       interceptors:
+    #         - auth/validate
+    #         - user/getCurrent
+
+
+    # - path: '/conversations/:id/bubls/:bublId/data'
+    #   methods:
+    #     GET:
+    #       cmd: bubl/getDataById
+    #       interceptors:
+    #         - auth/validate
+    #         - user/getCurrent
+
+
+    # - path: '/conversations/:id/bubls/:bublId/sticker/:elementId'
+    #   methods:
+    #     POST:
+    #       cmd: bubl/uploadSticker
+    #       interceptors:
+    #         - auth/validate
+    #         - user/getCurrent
+
+
+    # - path: '/conversations/:coversationId/bubls/:bublId/vote/:elementId'
+    #   methods:
+    #     POST:
+    #       cmd: buttons/addVoteTo
+    #       interceptors:
+    #         - auth/validate
+    #         - user/getCurrent
+    #       transformers:
+    #         - button/toApi
+
+
+errors:
+  # external codes
+  BadRequestError:
+    status: 400
+    message: 'Bad Request.'
+  UnauthorizedError:
+    status: 401
+    message: 'Invalid Session.'
+  ForbiddenError:
+    status: 403
+    message: 'You cannot access the requested service.'
+  NotFoundError:
+    status: 404
+    message: 'Resource not found.'
+  AuthenticationTimeOutError:
+    status: 419
+    message: 'Your session has expired.'
+  RequestTimeoutError:
+    status: 408
+    message: 'Request Timeout.'
+  InternalServerError:
+    status: 500
+    message: 'Internal Server Error.'
+  NotImplementedError:
+    status: 501
+    message: 'This service has not yet been implemented.'
+  ServiceUnavailableError:
+    status: 503
+    message: 'This service is currently not available.'
+  # internal codes
+  InvalidInputError:
+    status: 1000
+    message: 'Invalid Input.'
+  InvalidOutputError:
+    status: 1001
+    message: 'Invalid Output.'

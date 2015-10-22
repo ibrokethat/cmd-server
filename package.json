@@ -1,0 +1,50 @@
+{
+  "name": "node-api",
+  "description": "node api server",
+  "version": "0.0.0",
+  "author": {
+    "name": "Simon Jefford",
+    "email": "si@ibrokethat.com"
+  },
+  "contributors": [
+    {
+      "name": "Simon Jefford",
+      "email": "si@ibrokethat.com"
+    }
+  ],
+  "dependencies": {
+    "@ibrokethat/curry": "^0.0.0",
+    "@ibrokethat/factory": "^0.0.0",
+    "bcrypt": "^0.8.5",
+    "body-parser": "^1.14.1",
+    "co": "^4.6.0",
+    "config": "^1.16.0",
+    "deep-freeze": "0.0.1",
+    "es6-error": "^2.0.0",
+    "es6-promisify": "^3.0.0",
+    "express": "^4.13.3",
+    "is-my-json-valid": "^2.12.2",
+    "js-yaml": "^3.4.3",
+    "node-uuid": "^1.4.3",
+    "require-all": "^1.1.0",
+    "su-db": "git+ssh://git@github.com:super-useful/su-db.git",
+    "super-iter": "ibrokethat/iter",
+    "useful-value": "0.0.4"
+  },
+  "devDependencies": {
+    "chai": "latest",
+    "mocha": "latest",
+    "sinon": "latest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@bitbucket.com:yubl/node-api"
+  },
+  "scripts": {
+    "start": "node --harmony_destructuring index.js",
+    "test": "./node_modules/.bin/mocha --colors --recursive -R spec --ui bdd ./test/**/*.test.js --NODE_ENV=dev-test"
+  },
+  "engines": {
+    "node": "4.13.3"
+  }
+}

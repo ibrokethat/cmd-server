@@ -1,0 +1,102 @@
+---
+$schema: "http://json-schema.org/draft-04/schema#"
+
+id: "http://www.yubl.io/schemas/user.api"
+
+type: object
+
+properties:
+
+  id:
+    type: string
+
+  username:
+    type: string
+
+  country_code:
+    type: string
+
+  phone_number:
+    type: string
+
+  full_phone_number:
+    type: string
+
+  updated_at:
+    type: string
+    format: date-time
+
+  following:
+    type: number
+    default: 0
+
+  followers:
+    oneOf:
+      -
+        type: number
+        default: 0
+      -
+        type: array
+        items:
+          $ref: "#"
+
+  last_online:
+    type: string
+    format: date-time
+
+  last_location:
+    $ref: '#/definitions/location'
+
+  first_name:
+    type: string
+
+  last_name:
+    type: string
+
+  profile_image:
+    type: string
+
+  biography:
+    type: string
+
+  date_of_birth:
+    type: string
+
+  email:
+    type: string
+
+  _links:
+    type: object
+
+additionalProperties: false
+
+required:
+  - id
+  - username
+  - country_code
+  - phone_number
+  - updated_at
+  - followers
+  - following
+  - last_online
+  - first_name
+  - last_name
+  - profile_image
+  - date_of_birth
+  - email
+
+definitions:
+
+  location:
+    type: object
+
+    properties:
+
+      location:
+        type: array
+        items:
+          type: number
+
+      timestamp:
+        type: string
+        format: date-time
