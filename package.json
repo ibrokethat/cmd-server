@@ -1,6 +1,6 @@
 {
-  "name": "node-api",
-  "description": "node api server",
+  "name": "@ibroekthat/cmd-server",
+  "description": "nodejs application server, easily expose functionality over any protocol",
   "version": "0.0.0",
   "author": {
     "name": "Simon Jefford",
@@ -38,7 +38,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@bitbucket.com:yubl/node-api"
+    "url": "git@github.com:ibrokethat/cmd-server"
   },
   "scripts": {
     "start": "node --harmony_destructuring index.js",
