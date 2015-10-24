@@ -31,7 +31,7 @@ co(function* () {
 
     //  connect to our data bases
     const databases = yield dbs(global.CONF.dbs);
-    cfg.db = databases.queries;
+    cfg.db = databases.db;
 
     //  call db init/upgrade scripts here
     //  todo
