@@ -1,56 +1,57 @@
 {
-    "name": "@ibrokethat/cmd-server",
-    "description": "nodejs application server, easily expose functionality over any protocol",
-    "version": "0.0.0",
-    "author": {
-        "name": "Simon Jefford",
-        "email": "si@ibrokethat.com"
-    },
-    "contributors": [
-        {
-            "name": "Simon Jefford",
-            "email": "si@ibrokethat.com"
-        }
-    ],
-    "dependencies": {
-        "@ibrokethat/clone": "0.0.0",
-        "@ibrokethat/curry": "^1.0.1",
-        "@ibrokethat/factory": "^1.0.1",
-        "@ibrokethat/iter": "^1.0.2",
-        "bcrypt": "^0.8.5",
-        "body-parser": "^1.14.1",
-        "co": "^4.6.0",
-        "config": "^1.16.0",
-        "deep-freeze": "0.0.1",
-        "express": "^4.13.3",
-        "is-my-json-valid": "^2.12.2",
-        "js-yaml": "^3.4.3",
-        "mongodb-promisified": "^1.0.3",
-        "require-all": "^1.1.0",
-        "useful-value": "0.0.4"
-    },
-    "devDependencies": {
-        "chai": "latest",
-        "mocha": "latest",
-        "sinon": "latest"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git@github.com:ibrokethat/cmd-server"
-    },
-    "main": "build/index.js",
-    "scripts": {
-        "build": "./node_modules/.bin/babel ./src/**/*.js --out-dir build --source-maps" ,
-        "build-watch": "./node_modules/.bin/babel ./src/**/*.js --out-dir build --source-maps -w" ,
-
-        "pretest": "./node_modules/.bin/babel ./test/app/**/*.js --out-dir test/build" ,
-        "test": "./node_modules/.bin/mocha --colors --recursive -R spec --ui bdd ./test/**/*.test.js --NODE_ENV=test",
-
-        "prepublish" : "npm prune",
-        "postinstall" : "npm run build"
-
-    },
-    "engines": {
-        "node": "4.13.3"
+  "name": "@ibrokethat/cmd-server",
+  "description": "nodejs application server, easily expose functionality over any protocol",
+  "version": "0.0.0",
+  "author": {
+    "name": "Simon Jefford",
+    "email": "si@ibrokethat.com"
+  },
+  "contributors": [
+    {
+      "name": "Simon Jefford",
+      "email": "si@ibrokethat.com"
     }
+  ],
+  "dependencies": {
+    "@ibrokethat/clone": "0.0.0",
+    "@ibrokethat/curry": "^1.0.1",
+    "@ibrokethat/factory": "^1.0.1",
+    "@ibrokethat/iter": "^1.0.2",
+    "babel": "^5.8.29",
+    "bcrypt": "^0.8.5",
+    "body-parser": "^1.14.1",
+    "co": "^4.6.0",
+    "config": "^1.16.0",
+    "deep-freeze": "0.0.1",
+    "express": "^4.13.3",
+    "is-my-json-valid": "^2.12.2",
+    "js-yaml": "^3.4.3",
+    "mongodb-promisified": "^1.0.3",
+    "require-all": "^1.1.0",
+    "useful-value": "0.0.4"
+  },
+  "devDependencies": {
+    "chai": "^3.4.0",
+    "mocha": "^2.3.3",
+    "sinon": "^1.17.2",
+    "sinon-chai": "^2.8.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:ibrokethat/cmd-server"
+  },
+  "main": "build/src/index.js",
+  "scripts": {
+    "build": "./node_modules/.bin/babel src --out-dir build --source-maps",
+    "build-watch": "./node_modules/.bin/babel src --out-dir build --source-maps -w",
+
+    "pretest": "npm run build && ./node_modules/.bin/babel test/app --out-dir build/app",
+    "test": "./node_modules/.bin/mocha --colors --recursive -R spec --ui bdd ./test/**/*.test.js --NODE_ENV=test",
+
+    "prepublish": "npm prune",
+    "postinstall": "npm run build"
+  },
+  "engines": {
+    "node": "4.13.3"
+  }
 }

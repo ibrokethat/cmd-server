@@ -4,7 +4,7 @@ const curry = require('@ibrokethat/curry');
 const {forEach, map} = require('@ibrokethat/iter');
 const validator = require('is-my-json-valid');
 
-const schemas = require(`${global.ROOT}/schemas`);
+const schemas = require('./loadSchemas')();
 const transformers = require(`${global.ROOT}/lib/transformers`);
 
 const validators = map(schemas, (schema) => validator(schema, schemas));

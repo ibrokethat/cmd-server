@@ -2,8 +2,7 @@
   "whitelist" : [
     "es6.destructuring",
     "es6.parameters",
-    "es6.spread",
-    "es6.arrowFunctions"
+    "es6.spread"
   ],
   "comments" : true,
   "loose" : "all",

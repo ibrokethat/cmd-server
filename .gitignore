@@ -12,10 +12,10 @@
 
 # project specific
 node_modules
+build
 
 # local config
 config/local.json
-config/me.json
 
 # certificates
 config/certificates

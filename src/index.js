@@ -23,18 +23,13 @@ const cmdCategories = requireAll(path.join(global.ROOT, global.CONF.paths.cmds))
 //  we need to create a config object that is passed around at runtime
 const cfg = {
     db: null,
-    cmds: null
+    cmds: null,
+    services: null
 };
 
 
 co(function* () {
 
-    //  connect to our data bases
-    const databases = yield dbs(global.CONF.dbs);
-    cfg.db = databases.db;
-
-    //  call db init/upgrade scripts here
-    //  todo
 
     //  initialise all the cmds
     const cmds = map(cmdCategories, map(initCmd(cfg)));
@@ -42,26 +37,55 @@ co(function* () {
     //  create a ref to all our cmds on the cmds object as we only have one app at the moment
     cfg.cmds = map(cmds, map((cmd) => cmd.handler || () => {}));
 
-    //  create the http server
-    let app = express();
 
-    app.use(bodyParser.json()); // for parsing application/json
-    app.use(bodyParser.urlencoded({extended: true})); // for parsing application/x-www-form-urlencoded
+    //  connect to databases
+    if (global.CONF.dbs) {
+
+        const databases = yield dbs(global.CONF.dbs);
+
+        cfg.db = databases.db;
+
+        //  todo: call db init/upgrade scripts here
+    }
+
+    //  connect to services
+    if (global.CONF.services) {
+
+        //  todo: cfg.services =
+    }
 
 
-    //  bind the cmds to our http server
-    forEach(CONF.apis.paths, bindToHttp(app, cmds, cfg));
+    //  bind the cmds to http server
+    if (CONF.apis.paths) {
+
+        //  create the http server
+        let app = express();
+
+        app.use(bodyParser.json()); // for parsing application/json
+        app.use(bodyParser.urlencoded({extended: true})); // for parsing application/x-www-form-urlencoded
+
+        forEach(CONF.apis.paths, bindToHttp(app, cmds, cfg));
+
+        app.listen(CONF.app.port);
+
+        console.log(`http server started on port ${CONF.app.port}`);
+    }
 
 
-    app.listen(CONF.app.port);
+    //  bind the cmds to socket server
+    if (global.CONF.socket) {
+        //  todo
+    }
 
-    console.log(`http server started on port ${CONF.app.port}`);
+    //  bind the cmds to message broker
+    if (global.CONF.message) {
+        //  todo
+    }
+
+
 
 }).catch((err) => {
 
-    let error = new e.InternalServerError(err);
-
-    console.log(error.message);
-    console.log(error.stackTraces);
-
+    console.log(err.message);
+    console.log(err.stack);
 });

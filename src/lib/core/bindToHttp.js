@@ -67,7 +67,6 @@ module.exports = curry(function bindToHttp (app, cmds, cfg, apiConf) {
 
                 //    stop anyone doing anything stupid later
                 freeze(ctx);
-                freeze(data);
 
                 //    now we update the response by calling the bound cmd
                 let cmdResponse = yield cmd.handler(ctx, data);

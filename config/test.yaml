@@ -20,10 +20,10 @@ dbs:
 
 
 paths:
-  cmds: '/test/build/cmds'
-  schemas: '/test/build/schemas'
-  interceptors: '/test/build/lib/interceptors'
-  transformers: '/test/build/lib/transformers'
+  cmds: '/build/cmds'
+  schemas: '/test/schemas'
+  interceptors: '/build/lib/interceptors'
+  transformers: '/build/lib/transformers'
 
 
 apis:

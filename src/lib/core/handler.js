@@ -16,6 +16,8 @@ module.exports = function handler (inputSchema, outputSchema, fn) {
         try {
             if (!validateInput || validateInput(params)) {
 
+                freeze(params);
+
                 data = yield fn(ctx, params)
 
                 if (validateOutput  && !validateOutput(data)) {
