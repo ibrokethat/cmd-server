@@ -45,7 +45,7 @@ exports.handler = curry(function* create (cfg, ctx, params) {
             first_name: params.first_name,
             last_name: params.last_name,
             profile_image: params.profile_image,
-            biography: params.biography,
+            biography: params.biography || '',
             date_of_birth: params.date_of_birth || time,
             email: params.email,
         }

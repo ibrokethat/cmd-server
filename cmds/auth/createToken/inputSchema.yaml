@@ -1,0 +1,23 @@
+---
+$schema: "http://json-schema.org/draft-04/schema#"
+
+id: "http://www.yubl.io/schemas/id"
+
+type: object
+
+properties:
+  userId:
+    type: string
+
+  superuserId:
+    type: string
+
+
+oneOf:
+  -
+    required:
+      - userId
+
+  -
+    required:
+      - superuserId

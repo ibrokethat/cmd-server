@@ -1,0 +1,14 @@
+---
+$schema: "http://json-schema.org/draft-04/schema#"
+
+id: "http://www.yubl.io/schemas/token"
+
+type: object
+
+properties:
+  token:
+    type: string
+
+required:
+  - token
+

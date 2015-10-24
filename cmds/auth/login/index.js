@@ -15,13 +15,13 @@ const compare = promisify(bcrypt.compare);
 
 
 exports.inputSchema = inputSchema;
-exports.outputSchema = schemas.user;
+exports.outputSchema = schemas.login.api;
 
 exports.handler = curry(function* login (cfg, ctx, params) {
 
     let {db, cmds} = cfg;
 
-    let user = yield cmds.users.findByloginDetails(ctx, params);
+    let user = yield cmds.users.findByLoginDetails(ctx, params);
 
     if (!user) {
 
@@ -46,7 +46,11 @@ exports.handler = curry(function* login (cfg, ctx, params) {
         });
     }
 
-    let auth = yield db.auth.create({userId: user.id});
+    let token = yield cmds.auth.createToken({userId: user.id});
 
-    return userDetails;
+    return {
+        access_token: token,
+        activated: false,
+        status: 'OK'
+    };
 });

@@ -109,6 +109,7 @@ definitions:
 
       date_of_birth:
         type: string
+        format: date-time
 
       email:
         type: string

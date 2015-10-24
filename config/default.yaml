@@ -11,30 +11,32 @@ log:
 
 dbs:
   -
-    alias: users
     type: mongodb
-    connection:
-      pool: true
-      name: bubl-ng
-      port: 27017
-      #pwd: '$MONGODB_PASSWORD'
-      server: '127.0.0.1'
-      #user: '$MONGODB_PASSWORD'
-  -
-    alias: auth
-    type: mongodb
-    connection:
-      pool: true
-      name: bubl-ng
-      port: 27017
-      #pwd: '$MONGODB_PASSWORD'
-      server: '127.0.0.1'
-      #user: '$MONGODB_PASSWORD'
+    name: bubl-ng
+    port: 27017
+    # pwd: '$MONGODB_PASSWORD'
+    server: '127.0.0.1'
+    # user: '$MONGODB_PASSWORD'
+
+
+# dbs:
+#   -
+#     type: mongodb
+#     collections:
+#       - authentications
+#       - devices
+#       - users
+#     connection:
+#       pool: true
+#       name: bubl-ng
+#       port: 27017
+#       #pwd: '$MONGODB_PASSWORD'
+#       server: '127.0.0.1'
+#       #user: '$MONGODB_PASSWORD'
 
 
 paths:
   cmds: '/cmds'
-  queries: '/lib/queries'
   interceptors: '/lib/interceptors'
   transformers: '/lib/transformers'
 

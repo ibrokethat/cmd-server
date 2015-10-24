@@ -1,5 +1,5 @@
 {
-  "name": "@ibroekthat/cmd-server",
+  "name": "@ibrokethat/cmd-server",
   "description": "nodejs application server, easily expose functionality over any protocol",
   "version": "0.0.0",
   "author": {
@@ -13,8 +13,10 @@
     }
   ],
   "dependencies": {
-    "@ibrokethat/curry": "^0.0.0",
-    "@ibrokethat/factory": "^0.0.0",
+    "@ibrokethat/clone": "0.0.0",
+    "@ibrokethat/curry": "^1.0.1",
+    "@ibrokethat/factory": "^1.0.1",
+    "@ibrokethat/iter": "^1.0.2",
     "bcrypt": "^0.8.5",
     "body-parser": "^1.14.1",
     "co": "^4.6.0",
@@ -25,10 +27,10 @@
     "express": "^4.13.3",
     "is-my-json-valid": "^2.12.2",
     "js-yaml": "^3.4.3",
+    "mongodb-promisified": "^1.0.3",
     "node-uuid": "^1.4.3",
     "require-all": "^1.1.0",
     "su-db": "git+ssh://git@github.com:super-useful/su-db.git",
-    "super-iter": "ibrokethat/iter",
     "useful-value": "0.0.4"
   },
   "devDependencies": {
