@@ -17,7 +17,7 @@ const initCmd = require('./lib/core/initCmd');
 const bindToHttp = require('./lib/core/bindToHttp');
 const e = require('./lib/core/errors');
 
-const dbs = require(`${global.ROOT}/lib/dbs`);
+const dbs = require('./lib/dbs');
 const cmdCategories = requireAll(path.join(global.ROOT, global.CONF.paths.cmds));
 
 //  we need to create a config object that is passed around at runtime
