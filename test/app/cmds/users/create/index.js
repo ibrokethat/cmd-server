@@ -7,10 +7,11 @@ const bcrypt = require('bcrypt');
 const validator = require('is-my-json-valid');
 const uuid = require('node-uuid');
 
-const loadSchema = require(`${global.ROOT}/lib/core/loadSchema`);
-const helpers = require(`${global.ROOT}/lib/helpers`);
-const schemas = require(`${global.ROOT}/schemas`);
-const e = require(`${global.ROOT}/lib/core/errors`);
+const loadSchema = require('../../../../lib/core/loadSchema')
+const schemas = require('../../../../lib/core/loadSchemas')();
+const e = require('../../../../lib/core/errors');
+
+const helpers = require(`${process.cwd()}/lib/helpers`);
 
 const inputSchema = loadSchema(path.join(__dirname, './inputSchema.yaml'));
 

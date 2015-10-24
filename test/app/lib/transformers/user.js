@@ -1,6 +1,6 @@
 'use strict'
 
-const helpers = require(`${global.ROOT}/lib/helpers`);
+const helpers = require(`${process.cwd()}/lib/helpers`);
 
 module.exports = function* (cfg, ctx, data) {
 

@@ -24,7 +24,6 @@ module.exports = function handler (inputSchema, outputSchema, fn) {
 
                     throw new e.InvalidOutputError(validateOutput.errors);
                 }
-
             }
             else {
 

@@ -1,5 +1,7 @@
 'use strict';
 
+const CONF = require('config');
+
 const {map} = require('@ibrokethat/iter');
 const reRemoveBasePath = new RegExp( '' + process.cwd(), 'gim' );
 
@@ -77,7 +79,7 @@ class ExtendableError extends Error {
 }
 
 
-module.exports = map(global.CONF.errors, (def, name) => {
+module.exports = map(CONF.errors, (def, name) => {
 
     return class extends ExtendableError {
 

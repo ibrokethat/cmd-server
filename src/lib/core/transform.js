@@ -5,11 +5,11 @@ const {forEach, map} = require('@ibrokethat/iter');
 const validator = require('is-my-json-valid');
 
 const schemas = require('./loadSchemas')();
-const transformers = require(`${global.ROOT}/lib/transformers`);
+const transformers = require('./lib/transformers');
+const e = require('./lib/core/errors');
 
 const validators = map(schemas, (schema) => validator(schema, schemas));
 
-const e = require(`${global.ROOT}/lib/core/errors`);
 
 function next (transformer, v) {
 

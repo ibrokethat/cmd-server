@@ -2,8 +2,8 @@
 
 const curry = require('@ibrokethat/curry');
 
-const schemas = require(`${global.ROOT}/schemas`);
-const e = require(`${global.ROOT}/lib/core/errors`);
+const schemas = require('../../../../lib/core/loadSchemas')();
+const e = require('../../../../lib/core/errors');
 
 exports.outputSchema = schemas.user;
 

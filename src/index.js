@@ -1,29 +1,23 @@
 'use strict';
 
-global.ROOT = process.cwd();
-global.CONF = require('config');
-
 const path = require('path');
 
-const co = require('co');
 
-const express = require('express');
-const bodyParser = require('body-parser');
 const requireAll = require('require-all');
-
+const co = require('co');
 const {forEach, map} = require('@ibrokethat/iter');
 
+const CONF = require('config');
+
 const initCmd = require('./lib/core/initCmd');
-const bindToHttp = require('./lib/core/bindToHttp');
 const e = require('./lib/core/errors');
 
-const dbs = require('./lib/dbs');
-const cmdCategories = requireAll(path.join(global.ROOT, global.CONF.paths.cmds));
+const cmdCategories = requireAll(path.join(process.cwd(), CONF.paths.cmds));
 
 //  we need to create a config object that is passed around at runtime
 const cfg = {
-    db: null,
     cmds: null,
+    db: null,
     services: null
 };
 
@@ -37,26 +31,29 @@ co(function* () {
     //  create a ref to all our cmds on the cmds object as we only have one app at the moment
     cfg.cmds = map(cmds, map((cmd) => cmd.handler || () => {}));
 
-
     //  connect to databases
-    if (global.CONF.dbs) {
+    if (CONF.dbs) {
 
-        const databases = yield dbs(global.CONF.dbs);
+        const dbs = yield require(`${process.cwd()}/lib/dbs`)(CONF.dbs);
 
-        cfg.db = databases.db;
+        cfg.db = dbs.db;
 
         //  todo: call db init/upgrade scripts here
     }
 
     //  connect to services
-    if (global.CONF.services) {
+    if (CONF.services) {
 
-        //  todo: cfg.services =
+        cfg.services = yield require(`${process.cwd()}/lib/services`)(CONF.services);
     }
 
 
     //  bind the cmds to http server
     if (CONF.apis.paths) {
+
+        const express = require('express');
+        const bodyParser = require('body-parser');
+        const bindToHttp = require('./lib/core/bindToHttp');
 
         //  create the http server
         let app = express();
@@ -73,12 +70,12 @@ co(function* () {
 
 
     //  bind the cmds to socket server
-    if (global.CONF.socket) {
+    if (CONF.socket) {
         //  todo
     }
 
     //  bind the cmds to message broker
-    if (global.CONF.message) {
+    if (CONF.message) {
         //  todo
     }
 

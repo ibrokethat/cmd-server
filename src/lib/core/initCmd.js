@@ -2,7 +2,7 @@
 
 const curry = require('@ibrokethat/curry');
 
-const handler = require(global.ROOT + '/lib/core/handler');
+const handler = require('./lib/core/handler');
 
 module.exports = curry(function initCmd (cfg, cmd) {
 

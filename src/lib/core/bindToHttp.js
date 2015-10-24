@@ -7,8 +7,8 @@ const {forEach, map, reduce} = require('@ibrokethat/iter');
 const value = require('useful-value');
 const freeze = require('deep-freeze');
 
-const e = require(`${global.ROOT}/lib/core/errors`);
-const transform = require(`${global.ROOT}/lib/core/transform`);
+const e = require('./lib/core/errors');
+const transform = require('./lib/core/transform');
 
 
 module.exports = curry(function bindToHttp (app, cmds, cfg, apiConf) {
@@ -17,7 +17,7 @@ module.exports = curry(function bindToHttp (app, cmds, cfg, apiConf) {
 
     forEach(methods, (c, method) => {
 
-        let interceptors = map(c.interceptors || [], (pathTo) => require(`${global.ROOT}/lib/interceptors/${pathTo}`))
+        let interceptors = map(c.interceptors || [], (pathTo) => require(`${process.cwd()}/lib/interceptors/${pathTo}`))
         let transformer = c.transformer || null;
 
         let cmd = value(cmds, c.cmd.replace('/', '.'));
