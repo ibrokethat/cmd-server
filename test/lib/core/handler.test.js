@@ -32,12 +32,15 @@ describe(modulePath, () => {
         fn = function* () {};
     });
 
+    afterEach(()  =>  {
+
+        fakes = null;
+        inputSchema = undefined;
+        outputSchema = undefined;
+        fn = null;
+    });
+
     describe('exceptions', () => {
-
-        beforeEach(()  =>  {
-
-            fakes = sinon.sandbox.create();
-        });
 
         it('should throw an error if the inputSchema invalidates the params', (done) => {
 
@@ -138,7 +141,7 @@ describe(modulePath, () => {
         });
 
 
-        it('should freeze the response of the function', (done) => {
+        it('should freeze the response of it\'s function', (done) => {
 
             fn = function* (ctx, d) {
                 return {};
@@ -171,7 +174,34 @@ describe(modulePath, () => {
 
     describe('success', () => {
 
-        it('should return the response of the function', (done) => {
+
+        it('should pass it\'s parameters through to it\'s function', (done) => {
+
+            let spy = fakes.spy();
+
+            let ctx = {prop: 5};
+            let d = {prop: 10};
+
+            fn = function* (ctx, d) {
+                spy(ctx, d);
+                return {}
+            };
+
+            let h = underTest(inputSchema, outputSchema, fn);
+
+            co(function* () {
+
+                yield h(ctx, d);
+
+                expect(spy).to.have.been.calledWith(ctx, d);
+
+            }).then(done);
+
+        });
+
+
+
+        it('should return the response of it\'s function', (done) => {
 
             fn = function* (ctx, d) {
                 return {prop: d.prop * 10};

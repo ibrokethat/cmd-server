@@ -2,7 +2,7 @@
 
 const curry = require('@ibrokethat/curry');
 
-const handler = require('./lib/core/handler');
+const handler = require('./handler');
 
 module.exports = curry(function initCmd (cfg, cmd) {
 
@@ -12,12 +12,17 @@ module.exports = curry(function initCmd (cfg, cmd) {
 
     let {inputSchema, outputSchema, handler: fn} = cmd.index;
 
+    if (typeof fn !== 'function') {
+
+        throw new TypeError(`${fn} is not a function`);
+    }
+
     return {
-        inputSchema: inputSchema || {},
+        inputSchema: inputSchema || null,
 
         handler: handler(inputSchema, outputSchema, fn(cfg)),
 
-        outputSchema: outputSchema || {}
+        outputSchema: outputSchema || null
     };
 
 });
