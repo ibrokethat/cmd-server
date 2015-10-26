@@ -1,6 +1,5 @@
 'use strict';
 
-const ROOT = `${process.cwd()}/build`;
 const CONF = require('config');
 const co = require('co');
 
@@ -11,10 +10,10 @@ const sinon = require('sinon');
 
 chai.use(sinonChai);
 
-const modulePath = '/lib/core/initCmd';
+const modulePath = '/src/lib/core/initCmd';
 
-const underTest = require(`${ROOT}${modulePath}`);
-const e = require(`${ROOT}/lib/core/errors`);
+const underTest = require(`${process.cwd()}${modulePath}`);
+const e = require(`${process.cwd()}/src/lib/core/errors`);
 
 
 let fakes;

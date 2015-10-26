@@ -44,8 +44,8 @@
     "build": "./node_modules/.bin/babel src --out-dir build --source-maps",
     "build-watch": "./node_modules/.bin/babel src --out-dir build --source-maps -w",
 
-    "pretest": "npm run build && ./node_modules/.bin/babel test/app --out-dir build/app",
-    "test": "./node_modules/.bin/mocha --colors --recursive -R spec --ui bdd ./test/**/*.test.js --NODE_ENV=test",
+    "_pretest": "npm run build && ./node_modules/.bin/babel test/app --out-dir build/app",
+    "test": "./node_modules/.bin/mocha --compilers js:babel/register --colors --recursive -R spec --ui bdd ./test/**/*.test.js --NODE_ENV=test",
 
     "prepublish": "npm prune",
     "postinstall": "npm run build"

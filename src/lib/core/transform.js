@@ -1,14 +1,21 @@
 'use strict';
 
+const path = require('path');
+
+const CONF = require('config');
+
 const curry = require('@ibrokethat/curry');
 const {forEach, map} = require('@ibrokethat/iter');
 const validator = require('is-my-json-valid');
+const requireAll = require('require-all');
+
+const e = require('./errors');
 
 const schemas = require('./loadSchemas')();
-const transformers = require('./lib/transformers');
-const e = require('./lib/core/errors');
+const transformers = requireAll(path.join(process.cwd(), CONF.paths.transformers));
+const validators = map(schemas, (schema) => validator(schema, {schemas: schemas}));
 
-const validators = map(schemas, (schema) => validator(schema, schemas));
+
 
 
 function next (transformer, v) {
@@ -19,7 +26,7 @@ function next (transformer, v) {
     }
     else if (!/^\/#definitions\//.test(v)) {
 
-        let nextTransformer = v.split('/').pop();
+        let nextTransformer = v.split('#').pop();
 
         return nextTransformer;
     }
@@ -31,24 +38,25 @@ function next (transformer, v) {
 }
 
 
-const transform = curry(function* transform (transformer, cfg, ctx, res) {
+const transform = curry(function* (transformer, cfg, ctx, res) {
 
-    let schema = `${transformer}.api`;
-    res = yield transformers[transformer](cfg, ctx, res);
+    if (!transformers[transformer]) {
 
-    if (!validators[schema](res)) {
-
-        throw new e.InvalidOutputError(validators[schema].errors);
+        throw new ReferenceError(`${transformer} does not exist`);
     }
 
-    for (let key in res.data ) {
+    let schema = schemas[transformer];
+
+    res = yield transformers[transformer](cfg, ctx, res);
+
+    for (let key in res) {
 
         let value = res[key]
         let prop = schema.properties[key];
 
-        for(let k of prop) {
+        for(let k in prop) {
 
-            let v = prop[p];
+            let v = prop[k];
 
             if (k === 'oneOf') {
 
@@ -107,4 +115,14 @@ const transform = curry(function* transform (transformer, cfg, ctx, res) {
 });
 
 
-module.exports = transform;
+module.exports = function* (transformer, cfg, ctx, res) {
+
+    res = yield transform(transformer, cfg, ctx, res);
+
+    if (!validators[transformer](res)) {
+
+        throw new e.InvalidOutputError(validators[transformer].errors);
+    }
+
+    return res;
+};

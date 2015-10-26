@@ -1,0 +1,14 @@
+---
+$schema: "http://json-schema.org/draft-04/schema#"
+
+id: "http://www.cmd-server.com/schemas/external.api"
+
+type: object
+
+properties:
+
+  count:
+    type: number
+
+required:
+  - count

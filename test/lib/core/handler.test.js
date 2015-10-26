@@ -1,6 +1,5 @@
 'use strict';
 
-const ROOT = `${process.cwd()}/build`;
 const CONF = require('config');
 const co = require('co');
 
@@ -11,10 +10,10 @@ const sinon = require('sinon');
 
 chai.use(sinonChai);
 
-const modulePath = '/lib/core/handler';
+const modulePath = '/src/lib/core/handler';
 
-const underTest = require(`${ROOT}${modulePath}`);
-const e = require(`${ROOT}/lib/core/errors`);
+const underTest = require(`${process.cwd()}${modulePath}`);
+const e = require(`${process.cwd()}/src/lib/core/errors`);
 
 
 let fakes;
@@ -70,7 +69,7 @@ describe(modulePath, () => {
 
                 expect(error).to.be.an.instanceOf(e.InvalidInputError);
 
-            }).then(done);
+            }).then(done, done);
         });
 
 
@@ -104,7 +103,7 @@ describe(modulePath, () => {
 
                 expect(error).to.be.an.instanceOf(e.InvalidOutputError);
 
-            }).then(done);
+            }).then(done, done);
 
         });
 
@@ -136,7 +135,7 @@ describe(modulePath, () => {
 
                 expect(error).to.be.an.instanceOf(TypeError);
 
-            }).then(done);
+            }).then(done, done);
 
         });
 
@@ -165,7 +164,7 @@ describe(modulePath, () => {
 
                 expect(error).to.be.an.instanceOf(TypeError);
 
-            }).then(done);
+            }).then(done, done);
 
         });
 
@@ -195,7 +194,7 @@ describe(modulePath, () => {
 
                 expect(spy).to.have.been.calledWith(ctx, d);
 
-            }).then(done);
+            }).then(done, done);
 
         });
 
@@ -215,7 +214,7 @@ describe(modulePath, () => {
 
                 expect(d.prop).to.equal(100);
 
-            }).then(done);
+            }).then(done, done);
 
         });
 

@@ -7,9 +7,8 @@ const {forEach, map, reduce} = require('@ibrokethat/iter');
 const value = require('useful-value');
 const freeze = require('deep-freeze');
 
-const e = require('./lib/core/errors');
-const transform = require('./lib/core/transform');
-
+const e = require('./errors');
+const transform = require('./transform');
 
 module.exports = curry(function bindToHttp (app, cmds, cfg, apiConf) {
 

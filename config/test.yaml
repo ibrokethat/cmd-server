@@ -20,10 +20,10 @@ dbs:
 
 
 paths:
-  cmds: '/build/cmds'
-  schemas: '/test/schemas'
-  interceptors: '/build/lib/interceptors'
-  transformers: '/build/lib/transformers'
+  cmds: '/test/app/cmds'
+  schemas: '/test/app/schemas'
+  interceptors: '/test/app/lib/interceptors'
+  transformers: '/test/app/lib/transformers'
 
 
 apis:
@@ -35,14 +35,14 @@ apis:
       methods:
         POST:
           cmd: 'users/create'
-          transformer: user
+          transformer: 'user.api'
 
 
     - path: '/auth/login'
       methods:
         POST:
           cmd: 'auth/login'
-          transformer: loginSuccess
+          transformer: 'login.api'
 
 
 errors:
