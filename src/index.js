@@ -53,7 +53,7 @@ exports.init = function* () {
         }
 
 
-        //  bind the cmds to http server
+        //  bind the cmds to a http server
         if (CONF.apis) {
 
             //  try app specific http config first
@@ -68,13 +68,13 @@ exports.init = function* () {
 
         }
 
-        //  bind the cmds to socket server
+        //  bind the cmds to a socket server
         if (CONF.socket) {
 
             app.socket = yield require(`${process.cwd()}/lib/bind/toSocket`)(CONF.socket, cfg, cmds);
         }
 
-        //  bind the cmds to message broker
+        //  bind the cmds to a message broker
         if (CONF.message) {
 
             app.message = yield require(`${process.cwd()}/lib/bind/toMessage`)(CONF.message, cfg, cmds);

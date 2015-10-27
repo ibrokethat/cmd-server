@@ -39,7 +39,7 @@
     "type": "git",
     "url": "git@github.com:ibrokethat/cmd-server"
   },
-  "main": "build/src/index.js",
+  "main": "build/index.js",
   "scripts": {
     "build": "./node_modules/.bin/babel src --out-dir build --source-maps",
     "build-watch": "./node_modules/.bin/babel src --out-dir build --source-maps -w",
