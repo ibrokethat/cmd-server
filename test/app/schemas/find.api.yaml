@@ -1,0 +1,23 @@
+---
+$schema: "http://json-schema.org/draft-04/schema#"
+
+id: "http://www.cmd-server.com/schemas/find.api"
+
+type: object
+
+properties:
+
+  id:
+    type: string
+
+  find:
+    type: boolean
+
+  date:
+    type: string
+    format: date-time
+
+required:
+  - id
+  - find
+  - date

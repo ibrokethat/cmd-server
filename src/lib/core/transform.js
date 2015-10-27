@@ -16,8 +16,6 @@ const transformers = requireAll(path.join(process.cwd(), CONF.paths.transformers
 const validators = map(schemas, (schema) => validator(schema, {schemas: schemas}));
 
 
-
-
 function next (transformer, v) {
 
     if (v === '#') { // use same schema

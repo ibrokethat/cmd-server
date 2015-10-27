@@ -23,7 +23,7 @@ let data;
 
 describe(modulePath, () => {
 
-    beforeEach(()  =>  {
+    beforeEach(() => {
 
         fakes = sinon.sandbox.create();
         transformer = 'test.api';
@@ -35,7 +35,7 @@ describe(modulePath, () => {
         }
     });
 
-    afterEach(()  =>  {
+    afterEach(() => {
 
         fakes = null;
         transformer = null;

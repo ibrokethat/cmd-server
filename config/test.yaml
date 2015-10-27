@@ -1,8 +1,3 @@
-app:
-  port: 3000
-  global_request_timeout: 5000
-
-
 log:
   ERROR: 1
   INFO: 1
@@ -11,12 +6,12 @@ log:
   DEBUG: 1
 
 
-dbs:
-  -
-    type: mongodb
-    name: cmd-server
-    port: 27017
-    server: '127.0.0.1'
+# dbs:
+#   -
+#     type: mongodb
+#     name: cmd-server
+#     port: 27017
+#     server: '127.0.0.1'
 
 
 paths:
@@ -27,24 +22,36 @@ paths:
 
 
 apis:
-  # can be overidden on per api basis below
-  type: 'application/json'
+  port: 3000
+  global_request_timeout: 5000
+  type: 'application/json' # can be overidden on per api basis below: todo
   paths:
 
-    - path: '/auth/register'
+    - path: '/get/:id'
+      methods:
+        GET:
+          cmd: 'test/find'
+          transformer: 'find.api'
+
+
+    - path: '/post'
       methods:
         POST:
-          cmd: 'users/create'
-          transformer: 'user.api'
+          cmd: 'test/create'
 
 
-    - path: '/auth/login'
+    - path: '/put/patch'
       methods:
-        POST:
-          cmd: 'auth/login'
-          transformer: 'login.api'
+        PUT:
+          cmd: 'test/update'
+        PATCH:
+          cmd: 'test/update'
 
 
+
+
+
+# to do - move into own module...
 errors:
   # external codes
   BadRequestError:

@@ -1,5 +1,7 @@
 'use strict';
 
+const CONF = require('config');
+
 const co = require('co');
 const clone = require('@ibrokethat/clone');
 const curry = require('@ibrokethat/curry');
@@ -7,16 +9,16 @@ const {forEach, map, reduce} = require('@ibrokethat/iter');
 const value = require('useful-value');
 const freeze = require('deep-freeze');
 
-const e = require('./errors');
-const transform = require('./transform');
+const e = require('../../core/errors');
+const transform = require('../../core/transform');
 
-module.exports = curry(function bindToHttp (app, cmds, cfg, apiConf) {
+module.exports = curry(function initApi (app, cmds, cfg, apiConf) {
 
     let {path, methods} = apiConf;
 
     forEach(methods, (c, method) => {
 
-        let interceptors = map(c.interceptors || [], (pathTo) => require(`${process.cwd()}/lib/interceptors/${pathTo}`))
+        let interceptors = map(c.interceptors || [], (pathTo) => require(`${process.cwd()}${CONF.paths.interceptors}/${pathTo}`))
         let transformer = c.transformer || null;
 
         let cmd = value(cmds, c.cmd.replace('/', '.'));
@@ -74,7 +76,7 @@ module.exports = curry(function bindToHttp (app, cmds, cfg, apiConf) {
                 apiResponse._links = {};
 
                 //  transform the response
-                if (transform) {
+                if (transformer) {
 
                     apiResponse = yield transform(transformer, cfg, ctx, apiResponse);
                 }

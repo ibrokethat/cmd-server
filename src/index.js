@@ -1,10 +1,11 @@
 'use strict';
 
+const fs = require('fs');
 const path = require('path');
 
 const requireAll = require('require-all');
 const co = require('co');
-const {forEach, map} = require('@ibrokethat/iter');
+const {map} = require('@ibrokethat/iter');
 
 const CONF = require('config');
 
@@ -29,6 +30,8 @@ exports.e = e;
 
 exports.init = function* () {
 
+    let app = {};
+
     try {
 
         //  initialise all the cmds
@@ -40,55 +43,49 @@ exports.init = function* () {
         //  connect to databases
         if (CONF.dbs) {
 
-            const dbs = yield require(`${process.cwd()}/lib/dbs`)(CONF.dbs);
-
-            cfg.db = dbs.db;
-
-            //  todo: call db init/upgrade scripts here
+            cfg.db = yield require(`${process.cwd()}/lib/dbs`)(CONF.dbs);
         }
 
         //  connect to services
         if (CONF.services) {
 
-            cfg.services = yield require(`${process.cwd()}/lib/services`)(CONF.services);
+            cfg.services = yield require(`${process.cwd()}/lib/cfg/services`)(CONF.services);
         }
 
 
         //  bind the cmds to http server
-        if (CONF.apis.paths) {
+        if (CONF.apis) {
 
-            const express = require('express');
-            const bodyParser = require('body-parser');
-            const bindToHttp = require('./lib/core/bindToHttp');
+            //  try app specific http config first
+            if (fs.existsSync(`${process.cwd()}/lib/bind/toHttp`)) {
 
-            //  create the http server
-            let app = express();
+                app.http = yield require(`${process.cwd()}/lib/bind/toHttp`)(CONF.apis, cfg, cmds);
+            }
+            else {
 
-            app.use(bodyParser.json()); // for parsing application/json
-            app.use(bodyParser.urlencoded({extended: true})); // for parsing application/x-www-form-urlencoded
+                app.http = yield require('./lib/bind/toHttp')(CONF.apis, cfg, cmds);
+            }
 
-            forEach(CONF.apis.paths, bindToHttp(app, cmds, cfg));
-
-            app.listen(CONF.app.port);
-
-            console.log(`http server started on port ${CONF.app.port}`);
         }
-
 
         //  bind the cmds to socket server
         if (CONF.socket) {
-            //  todo
+
+            app.socket = yield require(`${process.cwd()}/lib/bind/toSocket`)(CONF.socket, cfg, cmds);
         }
 
         //  bind the cmds to message broker
         if (CONF.message) {
-            //  todo
+
+            app.message = yield require(`${process.cwd()}/lib/bind/toMessage`)(CONF.message, cfg, cmds);
         }
+
+        return app;
     }
     catch (e) {
 
-        console.log(err.message);
-        console.log(err.stack);
+        console.log(e.message);
+        console.log(e.stack);
     }
 }
 

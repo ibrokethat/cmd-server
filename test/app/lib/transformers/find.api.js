@@ -6,11 +6,7 @@ module.exports = function* (cfg, ctx, data) {
 
     let d = clone(data);
 
-    if (data.hasTransformProperty) {
-
-        delete d.hasTransformProperty;
-        d.transform = true;
-    }
+    d.date = new Date().toISOString();
 
     return d;
 }

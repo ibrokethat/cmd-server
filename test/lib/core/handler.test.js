@@ -23,7 +23,7 @@ let fn;
 
 describe(modulePath, () => {
 
-    beforeEach(()  =>  {
+    beforeEach(() => {
 
         fakes = sinon.sandbox.create();
         inputSchema = undefined;
@@ -31,7 +31,7 @@ describe(modulePath, () => {
         fn = function* () {};
     });
 
-    afterEach(()  =>  {
+    afterEach(() => {
 
         fakes = null;
         inputSchema = undefined;

@@ -22,7 +22,7 @@ let cfg;
 
 describe(modulePath, () => {
 
-    beforeEach(()  =>  {
+    beforeEach(() => {
 
         fakes = sinon.sandbox.create();
         cmd = {
@@ -35,7 +35,7 @@ describe(modulePath, () => {
         cfg = {prop: 10};
     });
 
-    afterEach(()  =>  {
+    afterEach(() => {
 
         fakes = null;
         cmd = null;
