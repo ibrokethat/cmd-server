@@ -3,7 +3,7 @@
 const CONF = require('config');
 
 const {map} = require('@ibrokethat/iter');
-const reRemoveBasePath = new RegExp( '' + process.cwd(), 'gim' );
+const reRemoveBasePath = new RegExp( '' + global.ROOT, 'gim' );
 
 class ExtendableError extends Error {
 

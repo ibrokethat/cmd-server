@@ -33,7 +33,7 @@ exports.init = function* () {
             services: null
         };
 
-        const cmdCategories = requireAll(path.join(process.cwd(), CONF.paths.cmds));
+        const cmdCategories = requireAll(path.join(global.ROOT, CONF.paths.cmds));
 
 
         //  initialise all the cmds
@@ -45,13 +45,13 @@ exports.init = function* () {
         //  connect to databases
         if (CONF.dbs) {
 
-            cfg.db = yield require(`${process.cwd()}/lib/dbs`)(CONF.dbs);
+            cfg.db = yield require(`${global.ROOT}/lib/dbs`)(CONF.dbs);
         }
 
         //  connect to services
         if (CONF.services) {
 
-            cfg.services = yield require(`${process.cwd()}/lib/cfg/services`)(CONF.services);
+            cfg.services = yield require(`${global.ROOT}/lib/cfg/services`)(CONF.services);
         }
 
 
@@ -59,9 +59,9 @@ exports.init = function* () {
         if (CONF.apis) {
 
             //  try app specific http config first
-            if (fs.existsSync(`${process.cwd()}/lib/bind/toHttp`)) {
+            if (fs.existsSync(`${global.ROOT}/lib/bind/toHttp`)) {
 
-                app.http = yield require(`${process.cwd()}/lib/bind/toHttp`)(CONF.apis, cfg, cmds);
+                app.http = yield require(`${global.ROOT}/lib/bind/toHttp`)(CONF.apis, cfg, cmds);
             }
             else {
 
@@ -73,13 +73,13 @@ exports.init = function* () {
         //  bind the cmds to a socket server
         if (CONF.socket) {
 
-            app.socket = yield require(`${process.cwd()}/lib/bind/toSocket`)(CONF.socket, cfg, cmds);
+            app.socket = yield require(`${global.ROOT}/lib/bind/toSocket`)(CONF.socket, cfg, cmds);
         }
 
         //  bind the cmds to a message broker
         if (CONF.message) {
 
-            app.message = yield require(`${process.cwd()}/lib/bind/toMessage`)(CONF.message, cfg, cmds);
+            app.message = yield require(`${global.ROOT}/lib/bind/toMessage`)(CONF.message, cfg, cmds);
         }
 
         return app;

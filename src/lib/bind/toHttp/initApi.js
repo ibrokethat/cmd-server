@@ -18,7 +18,7 @@ module.exports = curry(function initApi (app, cmds, cfg, apiConf) {
 
     forEach(methods, (c, method) => {
 
-        let interceptors = map(c.interceptors || [], (pathTo) => require(`${process.cwd()}${CONF.paths.interceptors}/${pathTo}`))
+        let interceptors = map(c.interceptors || [], (pathTo) => require(`${global.ROOT}${CONF.paths.interceptors}/${pathTo}`))
         let transformer = c.transformer || null;
 
         let cmd = value(cmds, c.cmd.replace('/', '.'));

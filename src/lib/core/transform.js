@@ -12,7 +12,7 @@ const requireAll = require('require-all');
 const e = require('./errors');
 
 const schemas = require('./loadSchemas')();
-const transformers = requireAll(path.join(process.cwd(), CONF.paths.transformers));
+const transformers = requireAll(path.join(global.ROOT, CONF.paths.transformers));
 const validators = map(schemas, (schema) => validator(schema, {schemas: schemas}));
 
 

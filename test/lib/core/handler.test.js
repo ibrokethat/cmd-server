@@ -1,5 +1,7 @@
 'use strict';
 
+global.ROOT = global.ROOT || process.cwd();
+
 const CONF = require('config');
 const co = require('co');
 
