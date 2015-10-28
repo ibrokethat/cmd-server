@@ -33,10 +33,9 @@ exports.init = function* () {
             services: null
         };
 
+        //  initialise all the cmds
         const cmdCategories = requireAll(path.join(global.ROOT, CONF.paths.cmds));
 
-
-        //  initialise all the cmds
         const cmds = map(cmdCategories, map(initCmd(cfg)));
 
         //  create a ref to all our cmds on the cmds object as we only have one app at the moment

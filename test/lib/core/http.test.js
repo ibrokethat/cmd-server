@@ -27,7 +27,6 @@ describe(modulePath, () => {
 
             fakes = sinon.sandbox.create();
             app = yield underTest.init();
-            console.log(app)
 
         }).then(done, done);
 
