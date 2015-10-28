@@ -72,7 +72,6 @@ module.exports = curry(function initApi (app, cmds, cfg, apiConf) {
                 //    now we update the response by calling the bound cmd
                 let cmdResponse = yield cmd.handler(ctx, data);
                 let apiResponse = clone(cmdResponse);
-
                 apiResponse._links = {};
 
                 //  transform the response
@@ -89,7 +88,6 @@ module.exports = curry(function initApi (app, cmds, cfg, apiConf) {
 
             }).catch((err) => {
 
-
                 let error = err;
 
                 switch (true) {
@@ -104,12 +102,11 @@ module.exports = curry(function initApi (app, cmds, cfg, apiConf) {
                         error = new e.InternalServerError(err);
                 }
 
-
                 let apiResponse = {
                     message: error.toString()
                 };
 
-                if (global.CONF.log.DEBUG) {
+                if (CONF.log.DEBUG) {
                     apiResponse.stack = error.stackTraces;
                 }
 
