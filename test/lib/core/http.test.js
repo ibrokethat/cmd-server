@@ -40,7 +40,7 @@ describe(modulePath, () => {
 
     describe('exceptions', () => {
 
-        it.only('should throw an error if the inputSchema invalidates the params', (done) => {
+        it('should throw an error if the inputSchema invalidates the params', (done) => {
 
             co(function* () {
 

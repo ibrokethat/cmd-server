@@ -1,0 +1,28 @@
+---
+$schema: "http://json-schema.org/draft-04/schema#"
+
+id: "http://www.cmd-server.com/schemas/test.api"
+
+type: object
+
+properties:
+
+  id:
+    type: string
+
+  transform:
+    type: boolean
+
+  refItems:
+    type: array
+    items:
+      $ref: "#"
+
+  externalItem:
+    $ref: "#external.api"
+
+additionalProperties: false
+
+required:
+  - id
+  - transform

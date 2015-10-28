@@ -15,14 +15,6 @@ const e = require('./lib/core/errors');
 
 const initCmd = require('./lib/core/initCmd');
 
-const cmdCategories = requireAll(path.join(process.cwd(), CONF.paths.cmds));
-
-//  we need to create a config object that is passed around at runtime
-const cfg = {
-    cmds: null,
-    db: null,
-    services: null
-};
 
 exports.loadSchema = loadSchema;
 exports.loadSchemas = loadSchemas;
@@ -30,9 +22,19 @@ exports.e = e;
 
 exports.init = function* () {
 
-    let app = {};
-
     try {
+
+        const app = {};
+
+        //  we need to create a config object that is passed around at runtime
+        const cfg = {
+            cmds: null,
+            db: null,
+            services: null
+        };
+
+        const cmdCategories = requireAll(path.join(process.cwd(), CONF.paths.cmds));
+
 
         //  initialise all the cmds
         const cmds = map(cmdCategories, map(initCmd(cfg)));
