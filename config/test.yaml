@@ -27,25 +27,31 @@ apis:
   type: 'application/json' # can be overidden on per api basis below: todo
   paths:
 
-    - path: '/get/:id'
+    - path: '/find/:id'
       methods:
         GET:
           cmd: 'test/find'
           transformer: 'find.api'
 
 
-    - path: '/post'
+    - path: '/create'
       methods:
         POST:
           cmd: 'test/create'
 
 
-    - path: '/put/patch'
+    - path: '/update/:id'
       methods:
         PUT:
           cmd: 'test/update'
         PATCH:
           cmd: 'test/update'
+
+
+    - path: '/params/:first/and/:second'
+      methods:
+        POST:
+          cmd: 'test/params'
 
 
 

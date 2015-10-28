@@ -33,7 +33,9 @@
     "chai": "^3.4.0",
     "mocha": "^2.3.3",
     "sinon": "^1.17.2",
-    "sinon-chai": "^2.8.0"
+    "sinon-chai": "^2.8.0",
+    "superagent": "^1.4.0",
+    "superagent-promise": "^1.0.3"
   },
   "repository": {
     "type": "git",
@@ -43,9 +45,7 @@
   "scripts": {
     "build": "./node_modules/.bin/babel src --out-dir build --source-maps",
     "build-watch": "./node_modules/.bin/babel src --out-dir build --source-maps -w",
-
     "test": "./node_modules/.bin/mocha --compilers js:babel/register --colors --recursive -R spec --ui bdd ./test/**/*.test.js --NODE_ENV=test",
-
     "prepublish": "npm prune",
     "postinstall": "npm run build"
   },
