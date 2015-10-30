@@ -1,23 +1,13 @@
 'use strict';
 
 const fs = require('fs');
-const path = require('path');
-
-const requireAll = require('require-all');
-const co = require('co');
 const {map} = require('@ibrokethat/iter');
 
 const CONF = require('config');
 
-const loadSchema = require('./lib/core/loadSchema');
-const loadSchemas = require('./lib/core/loadSchemas');
 const e = require('./lib/core/errors');
+const initCmds = require('./lib/core/initCmds');
 
-const initCmd = require('./lib/core/initCmd');
-
-
-exports.loadSchema = loadSchema;
-exports.loadSchemas = loadSchemas;
 exports.e = e;
 
 exports.init = function* () {
@@ -34,12 +24,7 @@ exports.init = function* () {
         };
 
         //  initialise all the cmds
-        const cmdCategories = requireAll(path.join(global.ROOT, CONF.paths.cmds));
-
-        const cmds = map(cmdCategories, map(initCmd(cfg)));
-
-        //  create a ref to all our cmds on the cmds object as we only have one app at the moment
-        cfg.cmds = map(cmds, map((cmd) => cmd.handler || () => {}));
+        const cmds = initCmds(cfg);
 
         //  connect to databases
         if (CONF.dbs) {

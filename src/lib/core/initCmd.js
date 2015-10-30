@@ -3,26 +3,31 @@
 const curry = require('@ibrokethat/curry');
 
 const handler = require('./handler');
+const validators = require('./validators');
 
-module.exports = curry(function initCmd (cfg, cmd) {
+module.exports = curry(function initCmd (cfg, category, cmd, action) {
 
-    if (!cmd.index) {
-        return {};
+    if (typeof cmd !== 'function') {
+
+        throw new TypeError(`${cmd} is not a function`);
     }
 
-    let {inputSchema, outputSchema, handler: fn} = cmd.index;
+    let type = `${category}.${action}`;
 
-    if (typeof fn !== 'function') {
+    let inputValidator = validators[`${type}.input`] || null;
+    let outputValidator = validators[`${type}.output`] || null;
+    let dbValidator = validators[`${type}.db`] || null;
+    let c = cfg;
 
-        throw new TypeError(`${fn} is not a function`);
+    //  make a unique cfg for ths cmd as it has a scoped validator
+    if (dbValidator) {
+
+        c = Object.create(cfg, {
+            validator: {
+                value: dbValidator
+            }
+        });
     }
 
-    return {
-        inputSchema: inputSchema || null,
-
-        handler: handler(inputSchema, outputSchema, fn(cfg)),
-
-        outputSchema: outputSchema || null
-    };
-
+    return handler(inputValidator, outputValidator, curry(cmd)(cfg));
 });

@@ -1,33 +1,29 @@
 'use strict';
 
 const freeze = require('deep-freeze');
-const validator = require('is-my-json-valid');
 const e = require('./errors');
 
-module.exports = function handler (inputSchema, outputSchema, fn) {
-
-    let validateInput = inputSchema ? validator(inputSchema, {greedy: true}) : null;
-    let validateOutput = outputSchema ? validator(outputSchema, {greedy: true}) : null;
+module.exports = function handler (inputValidator, outputValidator, fn) {
 
     return function* (ctx, params) {
 
         let data;
 
         try {
-            if (!validateInput || validateInput(params)) {
+            if (!inputValidator || inputValidator(params)) {
 
                 freeze(params);
 
                 data = yield fn(ctx, params)
 
-                if (validateOutput  && !validateOutput(data)) {
+                if (outputValidator  && !outputValidator(data)) {
 
-                    throw new e.InvalidOutputError(validateOutput.errors);
+                    throw new e.InvalidOutputError(outputValidator.errors);
                 }
             }
             else {
 
-                throw new e.InvalidInputError(validateInput.errors);
+                throw new e.InvalidInputError(inputValidator.errors);
             }
         }
         catch (e) {

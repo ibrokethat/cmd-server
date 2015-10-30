@@ -5,16 +5,15 @@ const path = require('path');
 const CONF = require('config');
 
 const curry = require('@ibrokethat/curry');
-const {forEach, map} = require('@ibrokethat/iter');
-const validator = require('is-my-json-valid');
+const {map} = require('@ibrokethat/iter');
 const requireAll = require('require-all');
 
 const e = require('./errors');
 
-const schemas = require('./loadSchemas')();
-const transformers = requireAll(path.join(global.ROOT, CONF.paths.transformers));
-const validators = map(schemas, (schema) => validator(schema, {schemas: schemas}));
+const schemas = require('./schemas');
+const validators = require('./validators');
 
+const transformers = requireAll(path.join(global.ROOT, CONF.paths.transformers));
 
 function next (transformer, v) {
 

@@ -4,8 +4,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const {forEach} = require('@ibrokethat/iter');
 
-
 const initApi = require('./initApi');
+const generateSwagger = require('./generateSwagger');
 
 module.exports = function* toHttp (CONF, cfg, cmds) {
 
@@ -16,6 +16,13 @@ module.exports = function* toHttp (CONF, cfg, cmds) {
       app.use(bodyParser.urlencoded({extended: true})); // for parsing application/x-www-form-urlencoded
 
       forEach(CONF.paths, initApi(app, cmds, cfg));
+
+      let swagger = generateSwagger(CONF, cmds);
+
+      app.get('/', (req, res, next) => {
+        res.send(swagger);
+        next();
+      })
 
       let port = process.env.CMD_SERVER_HTTP_PORT || CONF.port;
 
