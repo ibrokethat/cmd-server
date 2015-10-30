@@ -11,6 +11,7 @@ const freeze = require('deep-freeze');
 
 const e = require('../../core/errors');
 const transform = require('../../core/transform');
+const schemas = require('../../core/schemas');
 
 module.exports = curry(function initApi (app, cmds, cfg, apiConf) {
 
@@ -21,7 +22,8 @@ module.exports = curry(function initApi (app, cmds, cfg, apiConf) {
         let interceptors = map(c.interceptors || [], (pathTo) => require(`${global.ROOT}${CONF.paths.interceptors}/${pathTo}`))
         let transformer = c.transformer || null;
 
-        let cmd = value(cmds, c.cmd.replace('/', '.'));
+        let cmdPath = c.cmd.replace('/', '.');
+        let cmd = value(cmds, cmdPath);
 
         app[method.toLowerCase()](path, (req, res) => {
 
@@ -30,7 +32,9 @@ module.exports = curry(function initApi (app, cmds, cfg, apiConf) {
                 //    grab the request data to construct the data object
                 let {params, query, body} = req;
 
-                let data = reduce(cmd.inputSchema.properties, (acc, v, k) => {
+                let schema = schemas[`${cmdPath}.input`] || {};
+
+                let data = reduce(schema.properties || {}, (acc, v, k) => {
 
                     switch (true) {
 
@@ -53,7 +57,7 @@ module.exports = curry(function initApi (app, cmds, cfg, apiConf) {
 
                 }, {});
 
-
+                //  todo - map data from headers and http conf
                 //    create a context object to pass in
                 let ctx = {
                     authToken: req.authToken || null,
@@ -70,7 +74,7 @@ module.exports = curry(function initApi (app, cmds, cfg, apiConf) {
                 freeze(ctx);
 
                 //    now we update the response by calling the bound cmd
-                let cmdResponse = yield cmd.handler(ctx, data);
+                let cmdResponse = yield cmd(ctx, data);
                 let apiResponse = clone(cmdResponse);
                 apiResponse._links = {};
 

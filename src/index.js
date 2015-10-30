@@ -2,6 +2,7 @@
 
 const fs = require('fs');
 const {map} = require('@ibrokethat/iter');
+const freeze = require('deep-freeze');
 
 const CONF = require('config');
 
@@ -65,6 +66,8 @@ exports.init = function* () {
 
             app.message = yield require(`${global.ROOT}/lib/bind/toMessage`)(CONF.message, cfg, cmds);
         }
+
+        freeze(cfg);
 
         return app;
     }

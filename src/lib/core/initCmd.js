@@ -23,11 +23,11 @@ module.exports = curry(function initCmd (cfg, category, cmd, action) {
     if (dbValidator) {
 
         c = Object.create(cfg, {
-            validator: {
+            dbValidator: {
                 value: dbValidator
             }
         });
     }
 
-    return handler(inputValidator, outputValidator, curry(cmd)(cfg));
+    return handler(inputValidator, outputValidator, curry(cmd)(c));
 });
