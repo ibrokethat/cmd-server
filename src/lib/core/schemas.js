@@ -7,17 +7,33 @@ const CONF = require('config');
 const {reduce} = require('@ibrokethat/iter');
 const loadSchema = require('./loadSchema');
 
-let schemas = reduce(fs.readdirSync(`${process.cwd()}${CONF.paths.schemas}`), (acc, fileName) => {
+function load (dirname) {
 
-    if (/.yaml$/.test(fileName)) {
+    let dir = fs.readdirSync(dirname);
 
-        let schemaName = fileName.substr(0, fileName.length - 5);
+    let schemas = reduce(dir, (acc, fileName) => {
 
-        acc[schemaName] = loadSchema(`${process.cwd()}${CONF.paths.schemas}/${fileName}`);
-    }
+        let path = `${dirname}/${fileName}`;
 
-    return acc;
+        if (fs.statSync(path).isDirectory()) {
 
-}, {});
+            acc[fileName] = load(path);
+        }
+        else if (/.yaml$/.test(fileName)) {
+
+            let schemaName = fileName.substr(0, fileName.length - 5);
+
+            acc[schemaName] = loadSchema(path);
+        }
+
+        return acc;
+
+    }, {});
+
+    return schemas;
+
+}
+
+let schemas = load(`${process.cwd()}${CONF.paths.schemas}`);
 
 module.exports = schemas;

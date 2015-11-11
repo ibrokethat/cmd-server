@@ -32,7 +32,7 @@ module.exports = curry(function initApi (app, cmds, cfg, apiConf) {
                 //    grab the request data to construct the data object
                 let {params, query, body} = req;
 
-                let schema = schemas[`${cmdPath}.input`] || {};
+                let schema = value(schemas, `cmds.${cmdPath}.input`) || {};
 
                 let data = reduce(schema.properties || {}, (acc, v, k) => {
 

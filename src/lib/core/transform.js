@@ -6,6 +6,8 @@ const CONF = require('config');
 
 const curry = require('@ibrokethat/curry');
 const {map} = require('@ibrokethat/iter');
+const value = require('useful-value');
+
 const requireAll = require('require-all');
 
 const e = require('./errors');
@@ -35,16 +37,19 @@ function next (transformer, v) {
 }
 
 
-const transform = curry(function* (transformer, cfg, ctx, res) {
+const transform = curry(function* (transformerName, cfg, ctx, res) {
 
-    if (!transformers[transformer]) {
+    let path = transformerName.replace('/', '.');
+    let transformer = value(transformers, path);
 
-        throw new ReferenceError(`${transformer} does not exist`);
+    if (!transformer) {
+
+        throw new ReferenceError(`${transformerName} does not exist`);
     }
 
-    let schema = schemas[transformer];
+    let schema = value(schemas, path);
 
-    res = yield transformers[transformer](cfg, ctx, res);
+    res = yield transformer(cfg, ctx, res);
 
     for (let key in res) {
 
@@ -84,7 +89,7 @@ const transform = curry(function* (transformer, cfg, ctx, res) {
 
             if (k === '$ref') {
 
-                let nextTransformer = next(transformer, v);
+                let nextTransformer = next(transformerName, v);
 
                 if (nextTransformer) {
 
@@ -95,7 +100,7 @@ const transform = curry(function* (transformer, cfg, ctx, res) {
 
                 if (prop.items && prop.items.$ref) {
 
-                    let nextTransformer = next(transformer, prop.items.$ref);
+                    let nextTransformer = next(transformerName, prop.items.$ref);
 
                     if (nextTransformer) {
 
@@ -116,7 +121,9 @@ module.exports = function* (transformer, cfg, ctx, res) {
 
     res = yield transform(transformer, cfg, ctx, res);
 
-    if (!validators[transformer](res)) {
+    let validator = value(validators, transformer.replace('/', '.'));
+
+    if (!validator(res)) {
 
         throw new e.InvalidOutputError(validators[transformer].errors);
     }

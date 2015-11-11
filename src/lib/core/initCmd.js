@@ -1,6 +1,7 @@
 'use strict';
 
 const curry = require('@ibrokethat/curry');
+const value = require('useful-value');
 
 const handler = require('./handler');
 const validators = require('./validators');
@@ -12,11 +13,11 @@ module.exports = curry(function initCmd (cfg, category, cmd, action) {
         throw new TypeError(`${cmd} is not a function`);
     }
 
-    let type = `${category}.${action}`;
+    let type = `cmds.${category}.${action}`;
 
-    let inputValidator = validators[`${type}.input`] || null;
-    let outputValidator = validators[`${type}.output`] || null;
-    let dbValidator = validators[`${type}.db`] || null;
+    let inputValidator = value(validators, `${type}.input`) || null;
+    let outputValidator = value(validators, `${type}.output`) || null;
+    let dbValidator = value(validators, `${type}.db`) || null;
     let c = cfg;
 
     //  make a unique cfg for ths cmd as it has a scoped validator
