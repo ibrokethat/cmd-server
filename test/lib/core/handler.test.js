@@ -19,8 +19,8 @@ const e = require(`${process.cwd()}/src/lib/core/errors`);
 
 
 let fakes;
-let inputSchema;
-let outputSchema;
+let inputValidator;
+let outputValidator;
 let fn;
 
 describe(modulePath, () => {
@@ -28,33 +28,26 @@ describe(modulePath, () => {
     beforeEach(() => {
 
         fakes = sinon.sandbox.create();
-        inputSchema = undefined;
-        outputSchema = undefined;
+        inputValidator = undefined;
+        outputValidator = undefined;
         fn = function* () {};
     });
 
     afterEach(() => {
 
         fakes = null;
-        inputSchema = undefined;
-        outputSchema = undefined;
+        inputValidator = undefined;
+        outputValidator = undefined;
         fn = null;
     });
 
     describe('exceptions', () => {
 
-        it('should throw an error if the inputSchema invalidates the params', (done) => {
+        it('should throw an error if the inputValidator invalidates the params', (done) => {
 
-            inputSchema = {
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "type": "string"
-                    }
-                }
-            };
+            inputValidator = () => false;
 
-            let h = underTest(inputSchema, outputSchema, fn);
+            let h = underTest(inputValidator, outputValidator, fn);
 
             co(function* () {
 
@@ -75,20 +68,13 @@ describe(modulePath, () => {
         });
 
 
-        it('should throw an error if the outputSchema invalidates the response', (done) => {
+        it.only('should throw an error if the outputValidator invalidates the response', (done) => {
 
-            outputSchema = {
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "type": "string"
-                    }
-                }
-            };
+            output = () => false;
 
             fn = function* () {return {id: {}}};
 
-            let h = underTest(inputSchema, outputSchema, fn);
+            let h = underTest(inputValidator, outputValidator, fn);
 
             co(function* () {
 
@@ -120,7 +106,7 @@ describe(modulePath, () => {
                 d.prop = 'fail';
             };
 
-            let h = underTest(inputSchema, outputSchema, fn);
+            let h = underTest(inputValidator, outputValidator, fn);
 
             co(function* () {
 
@@ -148,7 +134,7 @@ describe(modulePath, () => {
                 return {};
             };
 
-            let h = underTest(inputSchema, outputSchema, fn);
+            let h = underTest(inputValidator, outputValidator, fn);
 
             co(function* () {
 
@@ -188,7 +174,7 @@ describe(modulePath, () => {
                 return {}
             };
 
-            let h = underTest(inputSchema, outputSchema, fn);
+            let h = underTest(inputValidator, outputValidator, fn);
 
             co(function* () {
 
@@ -208,7 +194,7 @@ describe(modulePath, () => {
                 return {prop: d.prop * 10};
             };
 
-            let h = underTest(inputSchema, outputSchema, fn);
+            let h = underTest(inputValidator, outputValidator, fn);
 
             co(function* () {
 
