@@ -68,9 +68,9 @@ describe(modulePath, () => {
         });
 
 
-        it.only('should throw an error if the outputValidator invalidates the response', (done) => {
+        it('should throw an error if the outputValidator invalidates the response', (done) => {
 
-            output = () => false;
+            outputValidator = () => false;
 
             fn = function* () {return {id: {}}};
 

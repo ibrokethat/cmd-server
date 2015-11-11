@@ -17,8 +17,6 @@ module.exports = curry(function* handler (inputValidator, outputValidator, fn, c
 
             if (outputValidator  && !outputValidator(data)) {
 
-                console.log(outputValidator.errors);
-
                 throw new e.InvalidOutputError(outputValidator.errors);
             }
         }
