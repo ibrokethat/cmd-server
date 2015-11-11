@@ -25,13 +25,7 @@ describe(modulePath, () => {
     beforeEach(() => {
 
         fakes = sinon.sandbox.create();
-        cmd = {
-            index: {
-                inputSchema: undefined,
-                outputSchema: undefined,
-                handler: fakes.spy()
-            }
-        };
+        cmd = fakes.spy();
         cfg = {prop: 10};
     });
 
@@ -44,9 +38,9 @@ describe(modulePath, () => {
 
     describe('exceptions', () => {
 
-        it('should throw an error if the handler is not a function', () => {
+        it.only('should throw an error if the handler is not a function', () => {
 
-            cmd.index.handler = {};
+            cmd = {};
 
             let error = false;
 
