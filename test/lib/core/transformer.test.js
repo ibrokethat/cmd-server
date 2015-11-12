@@ -26,7 +26,7 @@ describe(modulePath, () => {
     beforeEach(() => {
 
         fakes = sinon.sandbox.create();
-        transformer = 'test.api';
+        transformer = 'api/test';
         cfg = {prop: 10};
         ctx = {prop: 5};
         data = {
@@ -95,7 +95,7 @@ describe(modulePath, () => {
         it('should throw an error if a transform property does not match the referenced schema', (done) => {
 
             data.externalItem = {
-                count: "ten"
+                count: "number"
             }
 
             let error = false;
@@ -105,6 +105,8 @@ describe(modulePath, () => {
                 try {
 
                     let r = yield underTest(transformer, cfg, ctx, data);
+
+                    console.log(r);
                 }
                 catch(e) {
 

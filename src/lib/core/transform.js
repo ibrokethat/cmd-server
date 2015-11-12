@@ -125,7 +125,7 @@ module.exports = function* (transformer, cfg, ctx, res) {
 
     if (!validator(res)) {
 
-        throw new e.InvalidOutputError(validators[transformer].errors);
+        throw new e.InvalidOutputError(validator.errors);
     }
 
     return res;

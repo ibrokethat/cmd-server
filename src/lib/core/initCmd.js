@@ -3,19 +3,17 @@
 const curry = require('@ibrokethat/curry');
 const value = require('useful-value');
 
-const handler = require('./handler');
-const validators = require('./validators');
-
-module.exports = curry(function initCmd (cfg, category, cmd, action) {
+module.exports = curry(function initCmd (handler, validators, cfg, category, cmd, action) {
 
     if (typeof cmd !== 'function') {
 
         throw new TypeError(`${cmd} is not a function`);
     }
 
-    let type = `cmds.${category}.${action}`;
+    let type = `${category}.${action}`;
 
     let inputValidator = value(validators, `${type}.input`) || null;
+
     let outputValidator = value(validators, `${type}.output`) || null;
     let dbValidator = value(validators, `${type}.db`) || null;
     let c = cfg;

@@ -9,21 +9,13 @@ const loadSchema = require('./loadSchema');
 
 function load (dirname) {
 
-    let dir = fs.readdirSync(dirname);
+    let schemas = reduce(fs.readdirSync(dirname), (acc, fileName) => {
 
-    let schemas = reduce(dir, (acc, fileName) => {
-
-        let path = `${dirname}/${fileName}`;
-
-        if (fs.statSync(path).isDirectory()) {
-
-            acc[fileName] = load(path);
-        }
-        else if (/.yaml$/.test(fileName)) {
+        if (/.yaml$/.test(fileName)) {
 
             let schemaName = fileName.substr(0, fileName.length - 5);
 
-            acc[schemaName] = loadSchema(path);
+            acc[schemaName] = loadSchema(`${dirname}/${fileName}`);
         }
 
         return acc;
@@ -31,7 +23,6 @@ function load (dirname) {
     }, {});
 
     return schemas;
-
 }
 
 let schemas = load(`${process.cwd()}${CONF.paths.schemas}`);

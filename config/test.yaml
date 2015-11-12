@@ -31,7 +31,7 @@ apis:
       methods:
         GET:
           cmd: 'test/find'
-          transformer: 'find.api'
+          transformer: 'api/find'
 
 
     - path: '/create'

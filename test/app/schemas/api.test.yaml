@@ -1,7 +1,7 @@
 ---
 $schema: "http://json-schema.org/draft-04/schema#"
 
-id: "http://www.cmd-server.com/schemas/test.api"
+id: "http://www.cmd-server.com/schemas/api.test"
 
 type: object
 
@@ -19,7 +19,7 @@ properties:
       $ref: "#"
 
   externalItem:
-    $ref: "#external.api"
+    $ref: "#api.external"
 
 additionalProperties: false
 

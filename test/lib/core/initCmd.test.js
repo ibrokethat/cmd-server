@@ -17,28 +17,43 @@ const e = require(`${process.cwd()}/src/lib/core/errors`);
 
 
 let fakes;
-let cmd;
+let handler;
+let validators;
 let cfg;
+let category;
+let cmd;
+let action;
 
 describe(modulePath, () => {
 
     beforeEach(() => {
 
         fakes = sinon.sandbox.create();
-        cmd = fakes.spy();
+        handler = fakes.spy();
+        validators = {
+            ['test.get.input']: 'input',
+            ['test.get.output']: 'output'
+        };
         cfg = {prop: 10};
+        category = 'test';
+        cmd = fakes.spy();
+        action = 'get';
     });
 
     afterEach(() => {
 
         fakes = null;
-        cmd = null;
+        handler = null;
+        validators = null;
         cfg = null;
+        category = null;
+        cmd = null;
+        action = null;
     });
 
     describe('exceptions', () => {
 
-        it.only('should throw an error if the handler is not a function', () => {
+        it('should throw an error if the cmd is not a function', () => {
 
             cmd = {};
 
@@ -46,7 +61,7 @@ describe(modulePath, () => {
 
             try {
 
-                underTest({}, cmd);
+                underTest(handler, validators, {}, category, cmd, action);
             }
             catch(e) {
 
@@ -63,33 +78,27 @@ describe(modulePath, () => {
 
         it('should bind the cfg correctly', () => {
 
-            underTest(cfg, cmd);
+            underTest(handler, validators, cfg, category, cmd, action);
 
-            expect(cmd.index.handler).to.have.been.calledWith(cfg);
+            expect(cmd).to.have.been.calledWith(cfg);
         });
 
 
-        it('should return an object with the bound cmd and no schemas', () => {
+        it('should bind with no schemas', () => {
 
-            let c = underTest({}, cmd);
+            validators = {};
 
-            expect(c.inputSchema).to.equal(null);
-            expect(c.outputSchema).to.equal(null);
-            expect(c.handler).to.be.a('function');
+            underTest(handler, validators, cfg, category, cmd, action);
+
+            expect(handler).not.to.have.been.calledWith('input', 'output');
 
         });
 
-        it('should return an object with the bound cmd and schemas', () => {
+        it('should bind the schemas', () => {
 
-            cmd.index.inputSchema = {};
-            cmd.index.outputSchema = {};
+            underTest(handler, validators, cfg, category, cmd, action);
 
-            let c = underTest({}, cmd);
-
-            expect(c.inputSchema).to.equal(cmd.index.inputSchema);
-            expect(c.outputSchema).to.equal(cmd.index.outputSchema);
-            expect(c.handler).to.be.a('function');
-
+            expect(handler).to.have.been.calledWith('input', 'output');
         });
 
 

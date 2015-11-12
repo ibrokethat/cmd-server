@@ -1,12 +1,13 @@
 ---
 $schema: "http://json-schema.org/draft-04/schema#"
 
+id: "http://www.cmd-server.com/schemas/cmds/test/create/input"
+
 type: object
 
 properties:
-
-  id:
+  name:
     type: string
 
 required:
-  - id
+  - name
