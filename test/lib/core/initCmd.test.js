@@ -36,7 +36,9 @@ describe(modulePath, () => {
         };
         cfg = {prop: 10};
         category = 'test';
-        cmd = fakes.spy();
+        cmd = {
+            index: fakes.spy()
+        };
         action = 'get';
     });
 
@@ -55,7 +57,7 @@ describe(modulePath, () => {
 
         it('should throw an error if the cmd is not a function', () => {
 
-            cmd = {};
+            cmd.index = {};
 
             let error = false;
 
@@ -80,7 +82,7 @@ describe(modulePath, () => {
 
             underTest(handler, validators, cfg, category, cmd, action);
 
-            expect(cmd).to.have.been.calledWith(cfg);
+            expect(cmd.index).to.have.been.calledWith(cfg);
         });
 
 

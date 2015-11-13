@@ -5,9 +5,9 @@ const value = require('useful-value');
 
 module.exports = curry(function initCmd (handler, validators, cfg, category, cmd, action) {
 
-    if (typeof cmd !== 'function') {
+    if (typeof cmd.index !== 'function') {
 
-        throw new TypeError(`${cmd} is not a function`);
+        throw new TypeError(`${category}$/{action} is not a function`);
     }
 
     let type = `${category}.${action}`;
@@ -28,5 +28,5 @@ module.exports = curry(function initCmd (handler, validators, cfg, category, cmd
         });
     }
 
-    return handler(inputValidator, outputValidator, curry(cmd)(c));
+    return handler(inputValidator, outputValidator, curry(cmd.index)(c));
 });
