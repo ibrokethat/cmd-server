@@ -1,40 +1,143 @@
 'use strict';
 
-const {forEach, map, reduce} = require('@ibrokethat/iter');
+const fs = require('fs');
 
-module.exports = function generateSwagger (CONF, cmds) {
+const clone = require('@ibrokethat/clone');
+const {find, forEach, map, reduce} = require('@ibrokethat/iter');
 
-    return {
+const schemas = require('../../core/schemas');
 
-      "swagger": "2.0",
-      "info": {
-        "version": "1.0.0",
-        "title": "Swagger Petstore",
-        "description": "A sample API that uses a petstore as an example to demonstrate features in the swagger-2.0 specification",
-        "termsOfService": "http://swagger.io/terms/",
-        "contact": {
-          "name": "Swagger API Team",
-          "email": "foo@example.com",
-          "url": "http://madskristensen.net"
-        },
-        "license": {
-          "name": "MIT",
-          "url": "http://github.com/gruntjs/grunt/blob/master/LICENSE-MIT"
-        }
-      },
-      "host": "petstore.swagger.io",
-      "basePath": "/api",
-      "schemes": [
-        "http"
-      ],
-      "consumes": [
-        "application/json"
-      ],
-      "produces": [
-        "application/json"
-      ],
 
+const propType = (path, query, prop) => {
+
+    if (new RegExp(`:${prop}`).test(path)) {
+        return 'params';
+    }
+    else if (new RegExp(`[\?|&]${prop}`).test(path)) {
+        return 'query';
+    }
+
+    return 'body';
+};
+
+
+const isRequired = (schema, prop) => {
+
+    return !! (schema.required && schema.required.indexOf(prop) > -1);
+};
+
+
+const generateParameters = (c, method, def, schema) => {
+
+    const gen = (schema) => {
+
+        return reduce(schema.properties, (acc, v, k) => {
+
+            if (k === '$ref') {
+                acc.push({
+                    in: 'body',
+                    name: 'body',
+                    required: true,
+                    schema: v
+                });
+            }
+            else {
+
+                let prop = clone(v);
+
+                prop.in = propType(c.path, def.query, k);
+                prop.name = k;
+                prop.required = isRequired(schema, k);
+
+                acc.push(prop);
+
+                return acc;
+            }
+
+        }, []);
 
     }
 
+    if (method === 'post') {
+        return [{
+            in: 'body',
+            name: 'body',
+            required: true,
+            schema: schema
+        }];
+    }
+
+    return gen(schema.allOf ? schema.allOf : schema);
+};
+
+
+module.exports = function generateSwagger (CONF, cmds) {
+
+    let definitions = {};
+
+    let swagger = {
+
+        swagger: '2.0',
+        info: {
+            version: '1.0.0',
+            title: 'yubl-ng',
+            description: 'yubl api'
+        },
+        consumes: [
+            'application/json'
+        ],
+        produces: [
+          'application/json'
+        ],
+        paths: reduce(CONF.paths, (acc, c) => {
+
+            acc[c.path] = reduce(c.methods, (acc, def, method) => {
+
+                let inputSchemaName = `${def.cmd.replace('/', '.')}.input`;
+                let apiSchemaName = `${def.transformer.replace('/', '.')}`;
+
+                let inputSchema = schemas[inputSchemaName];
+                let apiSchema = schemas[apiSchemaName];
+
+                definitions[apiSchemaName] = apiSchema;
+
+                method = method.toLowerCase();
+
+                acc[method] = {
+
+                    description: def.description,
+
+                    parameters: generateParameters(c, method, def, inputSchema),
+
+                    responses: {
+                        [method === 'post' ? 201 : 200]: {
+                            schema: {
+                                $ref: `#/definitions/${apiSchemaName}`
+                            }
+                        }
+                    }
+                };
+
+                return acc;
+
+            }, {});
+
+            return acc;
+
+        }, {}),
+
+        definitions: map(definitions, (d) => {
+
+            let def = clone(d);
+
+            delete def.id;
+            delete def.$schema;
+
+            return def;
+        })
+    };
+
+    fs.writeFileSync(`${process.cwd()}/swagger-spec.json`, JSON.stringify(swagger, null, 4));
+
+    return swagger;
 };

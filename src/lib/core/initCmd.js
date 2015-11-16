@@ -7,7 +7,7 @@ module.exports = curry(function initCmd (handler, validators, cfg, category, cmd
 
     if (typeof cmd.index !== 'function') {
 
-        throw new TypeError(`${category}$/{action} is not a function`);
+        throw new TypeError(`${category}/${action} is not a function`);
     }
 
     let type = `${category}.${action}`;
