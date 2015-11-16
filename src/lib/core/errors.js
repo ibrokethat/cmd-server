@@ -91,3 +91,5 @@ module.exports = map(CONF.errors, (def, name) => {
     }
 
 });
+
+module.exports.ExtendableError = ExtendableError;

@@ -102,7 +102,7 @@ module.exports = curry(function initApi (app, cmds, cfg, apiConf) {
                         break;
 
                     case (err instanceof e.InvalidOutputError): // drop through on purpose
-                    default:
+                    case (!(err instanceof e.ExtendableError)):
                         error = new e.InternalServerError(err);
                 }
 

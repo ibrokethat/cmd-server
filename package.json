@@ -33,6 +33,7 @@
   "devDependencies": {
     "chai": "^3.4.0",
     "mocha": "^2.3.3",
+    "nodemon": "^1.8.1",
     "rewire": "^2.4.0",
     "sinon": "^1.17.2",
     "sinon-chai": "^2.8.0",
