@@ -108,11 +108,10 @@ module.exports = curry(function initApi (app, cmds, cfg, apiConf) {
                         break;
                 }
 
-                let apiResponse = {
-                    message: error.toString()
-                };
+                let apiResponse = error.messages;
 
-                if (CONF.log.DEBUG) {
+                if (!(error instanceof e.BadRequestError) && CONF.log.DEBUG) {
+
                     apiResponse.stack = error.stackTraces;
                 }
 

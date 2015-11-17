@@ -1,9 +1,11 @@
 'use strict';
 
-const CONF = require('config');
-
+const path = require('path');
 const {map} = require('@ibrokethat/iter');
 const reRemoveBasePath = new RegExp( '' + global.ROOT, 'gim' );
+const loadSchema = require('./loadSchema');
+
+const CONF = loadSchema(path.join(__dirname,'../../../config/default.yaml'));
 
 class ExtendableError extends Error {
 
@@ -21,6 +23,11 @@ class ExtendableError extends Error {
         Object.defineProperty(this, 'status', {
             enumerable : false,
             value : def.status
+        });
+
+        Object.defineProperty(this, 'displayMessages', {
+            enumerable : false,
+            value : def.displayMessages
         });
 
         Object.defineProperty(this, 'errors', {
@@ -69,16 +76,18 @@ class ExtendableError extends Error {
 
     get messages () {
 
-        let msgs = map(this.errors, (e) => {
-            return e.messages ? e.messages : {
-                message: e.toString()
-            }
-        });
-
-        return {
-          message: this.toString(),
-          messages: msgs
+        let msgs = {
+            error: this.toString()
         };
+
+        if (this.displayMessages) {
+
+            msgs.data = map(this.errors, (e) => {
+                return e.messages ? e.messages : e.toString();
+            });
+        }
+
+        return msgs;
     }
 }
 
