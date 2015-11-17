@@ -41,7 +41,7 @@ module.exports = curry(function initApi (app, cmds, cfg, apiConf) {
             app[method](path, (req, res) => {
 
                 let logMsg = {
-                    event: 'cmd-server:api-request',
+                    event: 'cmd-server:api',
                     data: {
                         api: path,
                         method: method,

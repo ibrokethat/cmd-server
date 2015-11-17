@@ -22,6 +22,7 @@ let fakes;
 let inputValidator;
 let outputValidator;
 let fn;
+let cmdName;
 
 describe(modulePath, () => {
 
@@ -31,6 +32,7 @@ describe(modulePath, () => {
         inputValidator = undefined;
         outputValidator = undefined;
         fn = function* () {};
+        cmdName = 'cmdName';
     });
 
     afterEach(() => {
@@ -39,6 +41,7 @@ describe(modulePath, () => {
         inputValidator = undefined;
         outputValidator = undefined;
         fn = null;
+        cmdName = undefined;
     });
 
     describe('exceptions', () => {
@@ -49,7 +52,7 @@ describe(modulePath, () => {
             inputValidator.errors = [];
             inputValidator.toJSON = () => {}
 
-            let h = underTest(inputValidator, outputValidator, fn);
+            let h = underTest(cmdName, inputValidator, outputValidator, fn);
 
             co(function* () {
 
@@ -78,7 +81,7 @@ describe(modulePath, () => {
 
             fn = function* () {return {id: {}}};
 
-            let h = underTest(inputValidator, outputValidator, fn);
+            let h = underTest(cmdName, inputValidator, outputValidator, fn);
 
             co(function* () {
 
@@ -110,7 +113,7 @@ describe(modulePath, () => {
                 d.prop = 'fail';
             };
 
-            let h = underTest(inputValidator, outputValidator, fn);
+            let h = underTest(cmdName, inputValidator, outputValidator, fn);
 
             co(function* () {
 
@@ -138,7 +141,7 @@ describe(modulePath, () => {
                 return {};
             };
 
-            let h = underTest(inputValidator, outputValidator, fn);
+            let h = underTest(cmdName, inputValidator, outputValidator, fn);
 
             co(function* () {
 
@@ -178,7 +181,7 @@ describe(modulePath, () => {
                 return {}
             };
 
-            let h = underTest(inputValidator, outputValidator, fn);
+            let h = underTest(cmdName, inputValidator, outputValidator, fn);
 
             co(function* () {
 
@@ -198,7 +201,7 @@ describe(modulePath, () => {
                 return {prop: d.prop * 10};
             };
 
-            let h = underTest(inputValidator, outputValidator, fn);
+            let h = underTest(cmdName, inputValidator, outputValidator, fn);
 
             co(function* () {
 

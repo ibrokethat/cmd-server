@@ -44,6 +44,8 @@ module.exports = curry(function initCmd (handler, validators, cfg, category, cmd
 
         logMsg.data.success = false;
         logMsg.data.error = e;
+
+        throw e;
     }
     finally {
 

@@ -92,7 +92,7 @@ describe(modulePath, () => {
 
             underTest(handler, validators, cfg, category, cmd, action);
 
-            expect(handler).not.to.have.been.calledWith('input', 'output');
+            expect(handler).not.to.have.been.calledWith(`${category}.${action}`, 'input', 'output');
 
         });
 
@@ -100,7 +100,7 @@ describe(modulePath, () => {
 
             underTest(handler, validators, cfg, category, cmd, action);
 
-            expect(handler).to.have.been.calledWith('input', 'output');
+            expect(handler).to.have.been.calledWith(`${category}.${action}`, 'input', 'output');
         });
 
 
