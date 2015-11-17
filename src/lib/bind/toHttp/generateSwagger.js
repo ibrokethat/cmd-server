@@ -94,12 +94,18 @@ module.exports = function generateSwagger (CONF, cmds) {
             acc[c.path] = reduce(c.methods, (acc, def, method) => {
 
                 let inputSchemaName = `${def.cmd.replace('/', '.')}.input`;
-                let apiSchemaName = `${def.transformer.replace('/', '.')}`;
-
                 let inputSchema = schemas[inputSchemaName];
-                let apiSchema = schemas[apiSchemaName];
 
-                definitions[apiSchemaName] = apiSchema;
+                let apiSchemaName;
+                let apiSchema;
+
+                if (def.transformer) {
+
+                    apiSchemaName = `${def.transformer.replace('/', '.')}`;
+                    apiSchema = schemas[apiSchemaName];
+
+                    definitions[apiSchemaName] = apiSchema;
+                }
 
                 method = method.toLowerCase();
 
@@ -111,9 +117,7 @@ module.exports = function generateSwagger (CONF, cmds) {
 
                     responses: {
                         [method === 'post' ? 201 : 200]: {
-                            schema: {
-                                $ref: `#/definitions/${apiSchemaName}`
-                            }
+                            schema: def.transformer ? {$ref: `#/definitions/${apiSchemaName}`} : {}
                         }
                     }
                 };
