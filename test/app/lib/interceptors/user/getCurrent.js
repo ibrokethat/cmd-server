@@ -2,7 +2,5 @@
 
 module.exports = function* (cfg, ctx, data) {
 
-    ctx.user = {
-        name: 'turdy'
-    }
+    ctx.user = true;
 }

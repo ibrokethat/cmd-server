@@ -85,12 +85,32 @@ module.exports = curry(function initApi (app, cmds, cfg, apiConf) {
 
                     }, {});
 
-                    //  todo - map data from headers and http conf
-                    //    create a context object to pass in
-                    let ctx = {
-                        authToken: req.authToken || null,
-                        user: null,
-                    };
+                    //  map data from headers and http conf
+                    let ctx = {};
+                    if (c.ctx) {
+
+                        if (c.ctx.params) {
+
+                            forEach(c.ctx.params, (v, k) => {
+
+                                Object.defineProperty(ctx, k, {
+                                    value: v,
+                                    enumerable: true
+                                });
+                            });
+                        }
+
+                        if (c.ctx.headers) {
+
+                            forEach(c.ctx.headers, (v, k) => {
+
+                                Object.defineProperty(ctx, k, {
+                                    value: req.headers[v.toLowerCase()],
+                                    enumerable: true
+                                });
+                            });
+                        }
+                    }
 
                     //   run our interceptor stack
                     for (let interceptor of interceptors) {

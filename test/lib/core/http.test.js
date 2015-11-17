@@ -63,6 +63,28 @@ describe(modulePath, () => {
 
             }).then(done, done);
         });
+
+        it('should throw a 500 error if there is an unexpected exception', (done) => {
+
+            co(function* () {
+
+                let error = false;
+
+                try {
+
+                    let res = yield sa.get(`${HOST}/find/throw`);
+                }
+                catch (e) {
+
+                    error = e;
+                }
+
+                expect(error.status).to.equal(500);
+
+            }).then(done, done);
+        });
+
+
     });
 
 
@@ -76,7 +98,7 @@ describe(modulePath, () => {
 
                 expect(body.id).to.equal('1234567890');
                 expect(body.find).to.equal(true);
-                expect(new Date(body.date)).to.instanceof(Date);
+                expect(new Date(body.date)).to.be.instanceof(Date);
 
             }).then(done, done);
         });
@@ -123,6 +145,56 @@ describe(modulePath, () => {
         });
 
     });
+
+
+    describe('context', () => {
+
+        it('should bind params specified in the config to the ctx object', (done) => {
+
+            co(function* () {
+
+                let {body} = yield sa.get(`${HOST}/find/1`);
+
+                expect(body.ctx.prop).to.equal('value');
+
+            }).then(done, done);
+
+        });
+
+        it('should bind headers specified in the config to the ctx object', (done) => {
+
+            co(function* () {
+
+                let {body} = yield sa.get(`${HOST}/find/1`).set({
+                    authorization: '1234567890'
+                });
+
+                expect(body.ctx.token).to.equal('1234567890');
+
+            }).then(done, done);
+
+        });
+
+    });
+
+
+    describe('interceptors', () => {
+
+        it('should run all the interceptors specified', (done) => {
+
+            co(function* () {
+
+                let {body} = yield sa.get(`${HOST}/find/1`);
+
+                expect(body.ctx.validate).to.be.true;
+                expect(body.ctx.user).to.be.true;
+
+            }).then(done, done);
+
+        });
+
+    })
+
 
     describe('params', () => {
 

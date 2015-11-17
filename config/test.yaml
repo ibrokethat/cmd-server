@@ -6,14 +6,6 @@ log:
   DEBUG: 1
 
 
-# dbs:
-#   -
-#     type: mongodb
-#     name: cmd-server
-#     port: 27017
-#     server: '127.0.0.1'
-
-
 paths:
   cmds: '/test/app/cmds'
   schemas: '/test/app/schemas'
@@ -30,7 +22,15 @@ apis:
     - path: '/find/:id'
       methods:
         GET:
+          ctx:
+            params:
+              prop: value
+            headers:
+              token: Authorization
           cmd: 'test/find'
+          interceptors:
+            - auth/validate
+            - user/getCurrent
           transformer: 'api/find'
 
 
