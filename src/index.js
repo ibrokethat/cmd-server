@@ -73,8 +73,14 @@ exports.init = function* () {
     }
     catch (e) {
 
-        console.log(e.message);
-        console.log(e.stack);
+        process.emit('cmd-server:log', {
+            event: 'cmd-server:start',
+            data: {
+                success: false,
+                error: e.stack
+            }
+        });
+
     }
 }
 

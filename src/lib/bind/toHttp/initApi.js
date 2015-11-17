@@ -19,107 +19,161 @@ module.exports = curry(function initApi (app, cmds, cfg, apiConf) {
 
     forEach(methods, (c, method) => {
 
-        let interceptors = map(c.interceptors || [], (pathTo) => require(`${global.ROOT}${CONF.paths.interceptors}/${pathTo}`))
-        let transformer = c.transformer || null;
+        let logMsg = {
+            event: 'cmd-server:initApi',
+            data: {
+                api: path,
+                method: method,
+                success: true
+            }
+        };
 
-        let cmdPath = c.cmd.replace('/', '.');
-        let cmd = value(cmds, cmdPath);
+        try {
 
-        app[method.toLowerCase()](path, (req, res) => {
+            let interceptors = map(c.interceptors || [], (pathTo) => require(`${global.ROOT}${CONF.paths.interceptors}/${pathTo}`))
+            let transformer = c.transformer || null;
 
-            co(function* () {
+            let cmdPath = c.cmd.replace('/', '.');
+            let cmd = value(cmds, cmdPath);
 
-                //    grab the request data to construct the data object
-                let {params, query, body} = req;
+            method = method.toLowerCase();
 
-                let schema = value(schemas, `${cmdPath}.input`) || {};
+            app[method](path, (req, res) => {
 
-                let data = reduce(schema.properties || {}, (acc, v, k) => {
+                let logMsg = {
+                    event: 'cmd-server:api-request',
+                    data: {
+                        api: path,
+                        method: method,
+                        time: {
+                            start: Date.now()
+                        }
+                    }
+                };
+
+
+                co(function* () {
+
+                    //    grab the request data to construct the data object
+                    let {params, query, body} = req;
+
+                    let schema = value(schemas, `${cmdPath}.input`) || {};
+
+                    let data = reduce(schema.properties || {}, (acc, v, k) => {
+
+                        switch (true) {
+
+                            case (params.hasOwnProperty(k)):
+
+                                logMsg.data.params = params;
+                                acc[k] = params[k];
+                                break;
+
+                            case (query.hasOwnProperty(k)):
+
+                                logMsg.data.query = query;
+                                acc[k] = query[k];
+                                break;
+
+                            case (body.hasOwnProperty(k)):
+
+                                logMsg.data.body = body;
+                                acc[k] = body[k];
+                                break;
+                        }
+                        return acc;
+
+                    }, {});
+
+                    //  todo - map data from headers and http conf
+                    //    create a context object to pass in
+                    let ctx = {
+                        authToken: req.authToken || null,
+                        user: null,
+                    };
+
+                    //   run our interceptor stack
+                    for (let interceptor of interceptors) {
+
+                        yield interceptor(cfg, ctx, data);
+                    }
+
+                    //    stop anyone doing anything stupid later
+                    freeze(ctx);
+
+                    //    now we update the response by calling the bound cmd
+                    let cmdResponse = yield cmd(ctx, data);
+                    let apiResponse = clone(cmdResponse);
+                    apiResponse._links = {};
+
+                    //  transform the response
+                    if (transformer) {
+
+                        apiResponse = yield transform(transformer, cfg, ctx, apiResponse);
+                    }
+
+
+                    return apiResponse;
+
+                }).then((apiResponse) => {
+
+                    let status = method === 'post' ? 201 : 200;
+
+                    res.status(status).send(apiResponse);
+
+                    logMsg.data.status = status;
+                    logMsg.data.time.end = Date.now();
+
+                    process.emit('cmd-server:log', logMsg);
+
+                }).catch((err) => {
+
+                    let error = err;
 
                     switch (true) {
 
-                        case (params.hasOwnProperty(k)):
+                        case (err instanceof e.InvalidInputError):
 
-                            acc[k] = params[k];
+                            error = new e.BadRequestError(err.errors);
                             break;
 
-                        case (query.hasOwnProperty(k)):
+                        case (err instanceof e.InvalidOutputError): // drop through on purpose
+                        case (!(err instanceof e.ExtendableError)):
 
-                            acc[k] = query[k];
-                            break;
-
-                        case (body.hasOwnProperty(k)):
-
-                            acc[k] = body[k];
+                            error = new e.InternalServerError(err);
                             break;
                     }
-                    return acc;
 
-                }, {});
+                    let apiResponse = error.messages;
 
-                //  todo - map data from headers and http conf
-                //    create a context object to pass in
-                let ctx = {
-                    authToken: req.authToken || null,
-                    user: null,
-                };
+                    if (!(error instanceof e.BadRequestError) && CONF.log.DEBUG) {
 
-                //   run our interceptor stack
-                for (let interceptor of interceptors) {
+                        apiResponse.stack = error.stackTraces;
+                    }
 
-                    yield interceptor(cfg, ctx, data);
-                }
+                    res.status(error.status).send(apiResponse);
 
-                //    stop anyone doing anything stupid later
-                freeze(ctx);
+                    logMsg.data.status = error.status;
+                    logMsg.data.error = error.messages;
+                    logMsg.data.stack = error.stackTraces;
+                    logMsg.data.time.end = Date.now();
 
-                //    now we update the response by calling the bound cmd
-                let cmdResponse = yield cmd(ctx, data);
-                let apiResponse = clone(cmdResponse);
-                apiResponse._links = {};
+                    process.emit('cmd-server:log', logMsg);
 
-                //  transform the response
-                if (transformer) {
-
-                    apiResponse = yield transform(transformer, cfg, ctx, apiResponse);
-                }
-
-                return apiResponse;
-
-            }).then((apiResponse) => {
-
-                res.send(apiResponse);
-
-            }).catch((err) => {
-
-                let error = err;
-
-                switch (true) {
-
-                    case (err instanceof e.InvalidInputError):
-
-                        error = new e.BadRequestError(err.errors);
-                        break;
-
-                    case (err instanceof e.InvalidOutputError): // drop through on purpose
-                    case (!(err instanceof e.ExtendableError)):
-
-                        error = new e.InternalServerError(err);
-                        break;
-                }
-
-                let apiResponse = error.messages;
-
-                if (!(error instanceof e.BadRequestError) && CONF.log.DEBUG) {
-
-                    apiResponse.stack = error.stackTraces;
-                }
-
-                res.status(error.status).send(apiResponse);
+                });
 
             });
 
-        })
+        }
+        catch (e) {
+
+            logMsg.data.success = false;
+            logMsg.data.error = e;
+        }
+        finally {
+
+            process.emit('cmd-server:log', logMsg);
+        }
 
     });
 
