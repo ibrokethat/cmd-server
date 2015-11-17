@@ -3,6 +3,7 @@
 const curry = require('@ibrokethat/curry');
 const freeze = require('deep-freeze');
 const e = require('./errors');
+const validatorErrors = require('./validatorErrors');
 
 module.exports = curry(function* handler (inputValidator, outputValidator, fn, ctx, params) {
 
@@ -17,15 +18,16 @@ module.exports = curry(function* handler (inputValidator, outputValidator, fn, c
 
             if (outputValidator  && !outputValidator(data)) {
 
-                throw new e.InvalidOutputError(outputValidator.errors);
+                throw new e.InvalidOutputError(validatorErrors(outputValidator));
             }
         }
         else {
 
-            throw new e.InvalidInputError(inputValidator.errors);
+            throw new e.InvalidInputError(validatorErrors(inputValidator));
         }
     }
     catch (e) {
+
         throw e;
     }
 

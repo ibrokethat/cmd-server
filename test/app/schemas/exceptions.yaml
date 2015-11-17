@@ -1,0 +1,34 @@
+---
+$schema: "http://json-schema.org/draft-04/schema#"
+
+id: "http://www.cmd-server.com/schemas/exceptions"
+
+type: object
+
+properties:
+  throwString:
+    type: string
+
+  throwRequired:
+    type: string
+
+  throwEnum:
+    type: string
+    enum:
+      - valid
+      - accept
+
+  throwFormat:
+    type: string
+    format: date-time
+
+  throwNested:
+    type: object
+    properties:
+
+      throwString:
+        type: string
+
+
+required:
+  - throwRequired

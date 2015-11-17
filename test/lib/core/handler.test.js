@@ -46,6 +46,8 @@ describe(modulePath, () => {
         it('should throw an error if the inputValidator invalidates the params', (done) => {
 
             inputValidator = () => false;
+            inputValidator.errors = [];
+            inputValidator.toJSON = () => {}
 
             let h = underTest(inputValidator, outputValidator, fn);
 
@@ -71,6 +73,8 @@ describe(modulePath, () => {
         it('should throw an error if the outputValidator invalidates the response', (done) => {
 
             outputValidator = () => false;
+            outputValidator.errors = [];
+            outputValidator.toJSON = () => {}
 
             fn = function* () {return {id: {}}};
 
