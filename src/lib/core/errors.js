@@ -24,7 +24,7 @@ class ExtendableError extends Error {
         });
 
         Object.defineProperty(this, 'errors', {
-            enumerable : false,
+            enumerable : true,
             value : errors
         });
 
@@ -58,9 +58,13 @@ class ExtendableError extends Error {
 
     get stackTraces () {
 
-        return map(this.errors, function (e) {
+        let stack = map(this.errors, function (e) {
             return e.stack.split('\n');
         });
+
+        stack.unshift(this.stack);
+
+        return stack;
     }
 
     get messages () {
