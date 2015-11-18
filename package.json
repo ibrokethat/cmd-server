@@ -17,12 +17,6 @@
     "@ibrokethat/curry": "^1.0.2",
     "@ibrokethat/factory": "^1.0.2",
     "@ibrokethat/iter": "^1.0.3",
-    "babel": "^6.1.18",
-    "babel-cli": "^6.1.18",
-    "babel-plugin-transform-es2015-arrow-functions": "^6.1.18",
-    "babel-plugin-transform-es2015-destructuring": "^6.1.18",
-    "babel-plugin-transform-es2015-parameters": "^6.1.18",
-    "babel-plugin-transform-es2015-spread": "^6.1.18",
     "body-parser": "^1.14.1",
     "co": "^4.6.0",
     "config": "^1.16.0",
@@ -37,6 +31,12 @@
     "useful-value": "0.0.4"
   },
   "devDependencies": {
+    "babel": "^6.1.18",
+    "babel-cli": "^6.1.18",
+    "babel-plugin-transform-es2015-arrow-functions": "^6.1.18",
+    "babel-plugin-transform-es2015-destructuring": "^6.1.18",
+    "babel-plugin-transform-es2015-parameters": "^6.1.18",
+    "babel-plugin-transform-es2015-spread": "^6.1.18",
     "babel-core": "^6.1.21",
     "chai": "^3.4.0",
     "mocha": "^2.3.3",
@@ -56,8 +56,7 @@
     "build": "./node_modules/.bin/babel src --out-dir build --source-maps",
     "build-watch": "./node_modules/.bin/babel src --out-dir build --source-maps -w",
     "test": "./node_modules/.bin/mocha --compilers js:babel-core/register --colors --recursive -R spec --ui bdd ./test/**/*.test.js --NODE_ENV=test",
-    "prepublish": "npm prune",
-    "postinstall": "npm run build"
+    "prepublish": "npm prune && npm run build"
   },
   "engines": {
     "node": "4.13.3"
