@@ -112,10 +112,19 @@ module.exports = curry(function initApi (app, cmds, cfg, apiConf) {
                         }
                     }
 
+                    // create a version of the cfg with no access to the data base
+                    let cfgNoDb = Object.create(cfg, {
+                        db: {
+                            get () {
+                                throw new ReferenceError('Access to data base not allowed at this point in time');
+                            }
+                        }
+                    });
+
                     //   run our interceptor stack
                     for (let interceptor of interceptors) {
 
-                        yield interceptor(cfg, ctx, data);
+                        yield interceptor(cfgNoDb, ctx, data);
                     }
 
                     //    stop anyone doing anything stupid later
@@ -129,7 +138,7 @@ module.exports = curry(function initApi (app, cmds, cfg, apiConf) {
                     //  transform the response
                     if (transformer) {
 
-                        apiResponse = yield transform(transformer, cfg, ctx, apiResponse);
+                        apiResponse = yield transform(transformer, cfgNoDb, ctx, apiResponse);
                     }
 
 

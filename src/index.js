@@ -68,6 +68,7 @@ exports.init = function* () {
             app.message = yield require(`${global.ROOT}/lib/bind/toMessage`)(CONF.message, cfg, cmds);
         }
 
+        //  stop anyone doing anything stupid later
         freeze(cfg);
 
         return app;
