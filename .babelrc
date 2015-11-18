@@ -1,12 +1,11 @@
 {
-  "whitelist" : [
-    "es6.destructuring",
-    "es6.parameters",
-    "es6.spread"
+  "plugins" : [
+    "transform-es2015-destructuring",
+    "transform-es2015-parameters",
+    "transform-es2015-spread",
+    "transform-es2015-arrow-functions"
   ],
   "comments" : true,
-  "loose" : "all",
   "sourceMaps" : true,
-  "sourceRoot" : "./",
-  "stage" : 0
+  "sourceRoot" : "./"
 }

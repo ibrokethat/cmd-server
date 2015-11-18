@@ -47,6 +47,7 @@ exports.init = function* () {
             if (fs.existsSync(`${global.ROOT}/lib/bind/toHttp`)) {
 
                 app.http = yield require(`${global.ROOT}/lib/bind/toHttp`)(CONF.apis, cfg, cmds);
+
             }
             else {
 
