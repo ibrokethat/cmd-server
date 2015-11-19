@@ -27,10 +27,10 @@ apis:
               prop: value
             headers:
               token: Authorization
-          cmd: 'test/find'
           interceptors:
             - auth/validate
             - user/getCurrent
+          cmd: 'test/find'
           transformer: 'api/find'
 
 

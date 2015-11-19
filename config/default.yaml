@@ -38,4 +38,6 @@ errors:
   InvalidOutputError:
     status: 1001
     message: 'Invalid Output.'
-
+  InvalidDataError:
+    status: 1002
+    message: 'Invalid Data.'
