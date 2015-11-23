@@ -30,7 +30,7 @@ module.exports = curry(function initApi (app, cmds, cfg, apiConf) {
 
         try {
 
-            let interceptors = map(c.interceptors || [], (pathTo) => require(`${global.ROOT}${CONF.paths.interceptors}/${pathTo}`))
+            let interceptors = map(c.interceptors || [], (pathTo) => require(`${global.ROOT}${CONF.paths.interceptors}/${pathTo}`));
             let transformer = c.transformer || null;
 
             let cmdPath = c.cmd.replace('/', '.');

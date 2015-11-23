@@ -1,7 +1,6 @@
 'use strict';
 
 const fs = require('fs');
-const {map} = require('@ibrokethat/iter');
 const freeze = require('deep-freeze');
 
 const CONF = require('config');
@@ -84,5 +83,5 @@ exports.init = function* () {
         });
 
     }
-}
+};
 

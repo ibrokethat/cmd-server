@@ -101,7 +101,7 @@ module.exports = map(CONF.errors, (def, name) => {
             super(name, def, e);
         }
 
-    }
+    };
 
 });
 

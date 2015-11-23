@@ -26,7 +26,7 @@ module.exports = curry(function* handler (cmdName, inputValidator, outputValidat
 
             freeze(params);
 
-            data = yield fn(ctx, params)
+            data = yield fn(ctx, params);
 
             if (outputValidator  && !outputValidator(data)) {
 

@@ -3,7 +3,7 @@
 const fs = require('fs');
 
 const clone = require('@ibrokethat/clone');
-const {find, forEach, map, reduce} = require('@ibrokethat/iter');
+const {map, reduce} = require('@ibrokethat/iter');
 
 const schemas = require('../../core/schemas');
 
@@ -55,8 +55,7 @@ const generateParameters = (c, method, def, schema) => {
             }
 
         }, []);
-
-    }
+    };
 
     if (method === 'post') {
         return [{
@@ -71,7 +70,7 @@ const generateParameters = (c, method, def, schema) => {
 };
 
 
-module.exports = function generateSwagger (CONF, cmds) {
+module.exports = function generateSwagger (CONF) {
 
     let definitions = {};
 

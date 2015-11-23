@@ -10,7 +10,7 @@ const getField = (schema, field) => {
     field = field.replace('.', '.properties.');
 
     return value(schema.properties, field);
-}
+};
 
 
 module.exports = function validatorErrors (validator) {
@@ -62,4 +62,4 @@ module.exports = function validatorErrors (validator) {
 
         return e;
     });
-}
+};

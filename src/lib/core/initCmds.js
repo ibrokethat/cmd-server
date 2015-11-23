@@ -21,5 +21,4 @@ module.exports = (cfg) => {
     cfg.cmds = map(cmds, map((cmd) => cmd));
 
     return cmds;
-}
-
+};

@@ -53,7 +53,7 @@ const transform = curry(function* (transformerName, cfg, ctx, res) {
 
     for (let key in res) {
 
-        let value = res[key]
+        let value = res[key];
         let prop = schema.properties[key];
 
         for(let k in prop) {

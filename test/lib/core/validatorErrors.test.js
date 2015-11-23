@@ -5,9 +5,9 @@ global.ROOT = global.ROOT || process.cwd();
 const CONF = require('config');
 const co = require('co');
 
-const chai = require("chai");
+const chai = require('chai');
 const expect = chai.expect;
-const sinonChai = require("sinon-chai");
+const sinonChai = require('sinon-chai');
 const sinon = require('sinon');
 
 chai.use(sinonChai);
@@ -136,7 +136,6 @@ describe(modulePath, () => {
         it('should be thrown if data is valid', () => {
 
             expect(validator(data)).to.be.true;
-
         });
 
     });

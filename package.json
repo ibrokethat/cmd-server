@@ -33,14 +33,17 @@
   "devDependencies": {
     "babel": "^6.1.18",
     "babel-cli": "^6.1.18",
+    "babel-core": "^6.1.21",
+    "babel-istanbul": "^0.5.8",
     "babel-plugin-transform-es2015-arrow-functions": "^6.1.18",
     "babel-plugin-transform-es2015-destructuring": "^6.1.18",
     "babel-plugin-transform-es2015-parameters": "^6.1.18",
     "babel-plugin-transform-es2015-spread": "^6.1.18",
-    "babel-core": "^6.1.21",
     "chai": "^3.4.0",
+    "jshint": "^2.8.0",
     "mocha": "^2.3.3",
     "nodemon": "^1.8.1",
+    "pre-commit": "^1.1.2",
     "rewire": "^2.4.0",
     "sinon": "^1.17.2",
     "sinon-chai": "^2.8.0",
@@ -56,8 +59,13 @@
     "build": "./node_modules/.bin/babel src --out-dir build --source-maps",
     "build-watch": "./node_modules/.bin/babel src --out-dir build --source-maps -w",
     "test": "./node_modules/.bin/mocha --compilers js:babel-core/register --colors --recursive -R spec --ui bdd ./test/**/*.test.js --NODE_ENV=test",
-    "prepublish": "npm prune && npm run build"
+    "prepublish": "npm prune && npm run build",
+    "jshint": "./node_modules/.bin/jshint -c .jshintrc --exclude-path .gitignore ./src",
+    "coverage": "./node_modules/.bin/babel-istanbul cover ./node_modules/.bin/_mocha ./test/**/*.test.js"
   },
+  "pre-commit": [
+    "jshint"
+  ],
   "engines": {
     "node": "4.13.3"
   }

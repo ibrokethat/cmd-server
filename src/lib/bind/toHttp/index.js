@@ -26,7 +26,7 @@ module.exports = function* toHttp (CONF, cfg, cmds) {
         res.set('Content-Type', 'application/json');
         res.send(swagger);
         next();
-    })
+    });
 
     let port = process.env.PORT || CONF.port;
 
@@ -41,5 +41,5 @@ module.exports = function* toHttp (CONF, cfg, cmds) {
     });
 
     return http;
-}
+};
 
