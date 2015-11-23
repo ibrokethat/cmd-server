@@ -22,6 +22,9 @@ errors:
   RequestTimeoutError:
     status: 408
     message: 'Request Timeout.'
+  UnprocessableEntityError:
+    status: 422
+    message: 'Unprocessable Entity.'
   InternalServerError:
     status: 500
     message: 'Internal Server Error.'

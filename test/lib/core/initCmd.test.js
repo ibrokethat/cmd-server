@@ -86,7 +86,7 @@ describe(modulePath, () => {
         });
 
 
-        it('should bind with no schemas', () => {
+        it('should bind with no validators', () => {
 
             validators = {};
 
@@ -96,11 +96,62 @@ describe(modulePath, () => {
 
         });
 
-        it('should bind the schemas', () => {
+
+        it('should bind the validators', () => {
 
             underTest(handler, validators, cfg, category, cmd, action);
 
             expect(handler).to.have.been.calledWith(`${category}.${action}`, 'input', 'output');
+        });
+
+
+        it('should bind the dbValidator to the cfg correctly', () => {
+
+            validators = {
+                ['test.get.db']: fakes.stub().returns(true)
+            };
+
+            underTest(handler, validators, cfg, category, cmd, action);
+
+            let c = cmd.index.args[0][0];
+
+            expect(c.__proto__).to.equal(cfg);
+            expect(c.dbValidator).to.be.a.function;
+
+            c.dbValidator(100);
+            expect(validators['test.get.db']).to.have.been.calledWith(100);
+        });
+
+
+
+        it('should throw the dbValidator errors', () => {
+
+            validators = {
+                ['test.get.db']: fakes.stub().returns(false)
+            };
+
+            validators['test.get.db'].errors = {
+                field: 'data.test',
+                message: 'is required'
+            };
+
+            underTest(handler, validators, cfg, category, cmd, action);
+
+            let c = cmd.index.args[0][0];
+
+            let error = false;
+
+            try {
+
+                c.dbValidator(100);
+            }
+            catch (err) {
+
+                error = err;
+            }
+
+            expect(error.name).to.equal('InvalidDataError')
+
         });
 
 
