@@ -11,6 +11,7 @@ const handler = require('./handler');
 const initCmd = require('./initCmd');
 const validators = require('./validators');
 
+
 module.exports = (cfg) => {
 
     const cmdCategories = requireAll(path.join(global.ROOT, CONF.paths.cmds));
@@ -18,7 +19,7 @@ module.exports = (cfg) => {
     const cmds = map(cmdCategories, (cmds, category) => map(cmds, initCmd(handler, validators, cfg, category)));
 
     //  create a ref to all our cmds on the cfg object
-    cfg.cmds = map(cmds, map((cmd) => cmd));
+    cfg.cmds = cmds;
 
     return cmds;
 };

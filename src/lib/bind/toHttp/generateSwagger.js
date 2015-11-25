@@ -29,6 +29,10 @@ const isRequired = (schema, prop) => {
 
 const generateParameters = (c, method, def, schema) => {
 
+    if (!schema) {
+        return [];
+    }
+
     const gen = (schema) => {
 
         return reduce(schema.properties, (acc, v, k) => {

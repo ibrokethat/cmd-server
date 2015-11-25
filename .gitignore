@@ -23,3 +23,6 @@ config/certificates
 
 # OSX files
 *.DS_Store
+
+# coverdage
+coverage
