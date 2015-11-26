@@ -24,7 +24,10 @@ module.exports = curry(function* handler (cmdName, inputValidator, outputValidat
 
         if (!inputValidator || inputValidator(params)) {
 
-            freeze(params);
+            if (params) {
+
+                freeze(params);
+            }
 
             data = yield fn(ctx, params);
 
@@ -54,6 +57,11 @@ module.exports = curry(function* handler (cmdName, inputValidator, outputValidat
 
     process.emit('cmd-server:log', logMsg);
 
-    return freeze(data);
+    if (data) {
+
+        freeze(data);
+    }
+
+    return data;
 
 });
