@@ -49,69 +49,83 @@ const transform = curry(function* (transformerName, cfg, ctx, res) {
 
     let schema = value(schemas, path);
 
-    res = yield transformer(cfg, ctx, res);
+    if (schema.type === 'array' && schema.items && schema.items.$ref) {
 
-    for (let key in res) {
+        let nextTransformer = next(transformerName, schema.items.$ref);
 
-        let value = res[key];
-        let prop = schema.properties[key];
+        if (nextTransformer) {
 
-        for(let k in prop) {
-
-            let v = prop[k];
-
-            if (k === 'oneOf') {
-
-                /*
-                    todo, need to think this one through
-                    if there is more than one ref specified we need an easy
-                    way of choosing which one to use at run time
-                    probably need a factory style transformer
-
-
-                    let fnTransformer = fac(new Map([
-                        [
-                            (data) => data.doesSomePropExist, // transformers.user.match
-                            (data) => {transform(transformers.user.transform, schemas[user.api], cfg, ctx, data)}
-                        ],
-                        [
-                            (data) => true, // transformers.href.match
-                            (data) => {transform(transformers.href.transform, schemas[href.api], cfg, ctx, data)}
-                        ]
-                    ]));
-
-                    which would mean the transformers would need to export 2 methods
-                    match and transform
-
-                */
-
-            }
-
-            if (k === '$ref') {
-
-                let nextTransformer = next(transformerName, v);
-
-                if (nextTransformer) {
-
-                    res[key] = yield transform(nextTransformer, cfg, ctx, value);
-                }
-            }
-            else if (k === 'type' && v === 'array') {
-
-                if (prop.items && prop.items.$ref) {
-
-                    let nextTransformer = next(transformerName, prop.items.$ref);
-
-                    if (nextTransformer) {
-
-                        res[key] = yield map(value, transform(nextTransformer, cfg, ctx));
-                    }
-                }
-            }
-
+            res = yield map(res, transform(nextTransformer, cfg, ctx));
         }
 
     }
+    else {
+
+        res = yield transformer(cfg, ctx, res);
+
+        for (let key in res) {
+
+            let value = res[key];
+
+            let prop = schema.properties[key];
+
+            for(let k in prop) {
+
+                let v = prop[k];
+
+                if (k === 'oneOf') {
+
+                    /*
+                        todo, need to think this one through
+                        if there is more than one ref specified we need an easy
+                        way of choosing which one to use at run time
+                        probably need a factory style transformer
+
+
+                        let fnTransformer = fac(new Map([
+                            [
+                                (data) => data.doesSomePropExist, // transformers.user.match
+                                (data) => {transform(transformers.user.transform, schemas[user.api], cfg, ctx, data)}
+                            ],
+                            [
+                                (data) => true, // transformers.href.match
+                                (data) => {transform(transformers.href.transform, schemas[href.api], cfg, ctx, data)}
+                            ]
+                        ]));
+
+                        which would mean the transformers would need to export 2 methods
+                        match and transform
+
+                    */
+
+                }
+
+                if (k === '$ref') {
+
+                    let nextTransformer = next(transformerName, v);
+
+                    if (nextTransformer) {
+
+                        res[key] = yield transform(nextTransformer, cfg, ctx, value);
+                    }
+                }
+                else if (k === 'type' && v === 'array') {
+
+                    if (prop.items && prop.items.$ref) {
+
+                        let nextTransformer = next(transformerName, prop.items.$ref);
+
+                        if (nextTransformer) {
+
+                            res[key] = yield map(value, transform(nextTransformer, cfg, ctx));
+                        }
+                    }
+                }
+
+            }
+        }
+    }
+
 
     return res;
 });
