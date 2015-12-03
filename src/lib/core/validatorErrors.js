@@ -21,7 +21,7 @@ module.exports = function validatorErrors (validator) {
 
     return map(errors, (err) => {
 
-        let field = /^data\.(.+)/.exec(err.field)[1];
+        let field = err.field === 'data' ? null : /^data\.(.+)/.exec(err.field)[1];
         let e;
         let message;
 
@@ -43,6 +43,12 @@ module.exports = function validatorErrors (validator) {
 
                 message = `${field} ${err.message}: expected to be one of [${getField(schema, field).enum.join(', ')}]`;
                 e = new TypeError(message);
+                break;
+
+            case 'no (or more than one) schemas match':
+
+                message = err.message;
+                e = new ReferenceError(message);
                 break;
 
             default:

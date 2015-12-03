@@ -14,7 +14,7 @@ module.exports = function* find (cfg, ctx, params) {
     let data = clone(params);
     data.find = true;
 
-    data.ctx = ctx;
+    data.ctx = clone(ctx);
 
     return data;
 };

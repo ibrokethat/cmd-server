@@ -3,6 +3,7 @@
 const curry = require('@ibrokethat/curry');
 const value = require('useful-value');
 const e = require('./errors');
+const validatorErrors = require('./validatorErrors');
 
 module.exports = curry(function initCmd (handler, validators, cfg, category, cmd, action) {
 
@@ -38,7 +39,7 @@ module.exports = curry(function initCmd (handler, validators, cfg, category, cmd
 
                         if (!dbValidator(data)) {
 
-                            throw new e.InvalidDataError(dbValidator.errors);
+                            throw new e.InvalidDataError(validatorErrors(dbValidator));
                         }
                     }
                 }
@@ -49,6 +50,7 @@ module.exports = curry(function initCmd (handler, validators, cfg, category, cmd
     }
     catch (err) {
 
+        logMsg.level = 'error';
         logMsg.data.success = false;
         logMsg.data.error = err;
 

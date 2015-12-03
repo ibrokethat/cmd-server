@@ -130,10 +130,12 @@ describe(modulePath, () => {
                 ['test.get.db']: fakes.stub().returns(false)
             };
 
-            validators['test.get.db'].errors = {
+            validators['test.get.db'].errors = [{
                 field: 'data.test',
                 message: 'is required'
-            };
+            }];
+
+            validators['test.get.db'].toJSON = () => {};
 
             underTest(handler, validators, cfg, category, cmd, action);
 

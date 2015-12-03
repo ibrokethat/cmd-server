@@ -1,7 +1,7 @@
 {
   "name": "@ibrokethat/cmd-server",
   "description": "nodejs application server, easily expose functionality over any protocol",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "author": {
     "name": "Simon Jefford",
     "email": "si@ibrokethat.com"
@@ -15,6 +15,7 @@
   "dependencies": {
     "@ibrokethat/clone": "0.0.0",
     "@ibrokethat/curry": "^1.0.2",
+    "@ibrokethat/deep-seal": "0.0.0",
     "@ibrokethat/factory": "^1.0.2",
     "@ibrokethat/iter": "^1.0.3",
     "body-parser": "^1.14.1",

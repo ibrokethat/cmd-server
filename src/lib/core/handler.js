@@ -43,7 +43,6 @@ module.exports = curry(function* handler (cmdName, inputValidator, outputValidat
     }
     catch (e) {
 
-
         logMsg.data.success = false;
         logMsg.data.stack = e.stack;
         logMsg.data.time.end = Date.now();
@@ -60,6 +59,11 @@ module.exports = curry(function* handler (cmdName, inputValidator, outputValidat
     if (data) {
 
         freeze(data);
+    }
+
+    if (ctx.hasOwnProperty('cmdCount') && typeof ctx.cmdCount === 'number') {
+
+        ctx.cmdCount = ctx.cmdCount + 1;
     }
 
     return data;

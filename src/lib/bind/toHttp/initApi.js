@@ -6,8 +6,8 @@ const co = require('co');
 const clone = require('@ibrokethat/clone');
 const curry = require('@ibrokethat/curry');
 const {forEach, map, reduce} = require('@ibrokethat/iter');
+const seal = require('@ibrokethat/deep-seal');
 const value = require('useful-value');
-const freeze = require('deep-freeze');
 
 const e = require('../../core/errors');
 const transform = require('../../core/transform');
@@ -51,6 +51,13 @@ module.exports = curry(function initApi (app, cmds, cfg, apiConf) {
                     }
                 };
 
+                // create a ctx object
+                let ctx = Object.create({}, {
+                    cmdCount: {
+                        value: 0,
+                        writable: true
+                    }
+                });
 
                 co(function* () {
 
@@ -86,7 +93,6 @@ module.exports = curry(function initApi (app, cmds, cfg, apiConf) {
                     }, {});
 
                     //  map data from headers and http conf
-                    let ctx = {};
                     if (c.ctx) {
 
                         if (c.ctx.params) {
@@ -127,8 +133,10 @@ module.exports = curry(function initApi (app, cmds, cfg, apiConf) {
                         yield interceptor(cfgNoDb, ctx, data);
                     }
 
-                    //    stop anyone doing anything stupid later
-                    freeze(ctx);
+                    //  stop anyone doing anything stupid later
+                    //  we are sealing here not freezing so the cmdCount can be
+                    //  incremented later
+                    seal(ctx);
 
                     //    now we update the response by calling the bound cmd
                     let cmdResponse = yield cmd(ctx, data);
@@ -163,10 +171,26 @@ module.exports = curry(function initApi (app, cmds, cfg, apiConf) {
 
                         case (err instanceof e.InvalidInputError):
 
-                            error = new e.BadRequestError(err.errors);
+                            if (ctx.cmdCount === 0) {
+
+                                error = new e.BadRequestError(err.errors);
+                            }
+                            else {
+
+                                error = new e.InternalServerError(err.errors);
+                            }
                             break;
 
-                        case (err instanceof e.InvalidOutputError): // drop through on purpose
+                        case (err instanceof e.InvalidDataError):
+
+                            error = new e.InternalServerError(err.errors);
+                            break;
+
+                        case (err instanceof e.InvalidOutputError):
+
+                            error = new e.InternalServerError(err.errors);
+                            break;
+
                         case (!(err instanceof e.ExtendableError)):
 
                             error = new e.InternalServerError(err);
@@ -196,6 +220,7 @@ module.exports = curry(function initApi (app, cmds, cfg, apiConf) {
         }
         catch (e) {
 
+            logMsg.level = 'error';
             logMsg.data.success = false;
             logMsg.data.error = e;
         }

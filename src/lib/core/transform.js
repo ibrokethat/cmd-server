@@ -14,6 +14,7 @@ const e = require('./errors');
 
 const schemas = require('./schemas');
 const validators = require('./validators');
+const validatorErrors = require('./validatorErrors');
 
 const transformers = requireAll(path.join(global.ROOT, CONF.paths.transformers));
 
@@ -133,14 +134,38 @@ const transform = curry(function* (transformerName, cfg, ctx, res) {
 
 module.exports = function* (transformer, cfg, ctx, res) {
 
-    res = yield transform(transformer, cfg, ctx, res);
+    let logMsg = {
+        event: 'cmd-server:transformer',
+        data: {
+            transformer: transformer,
+            success: true
+        }
+    };
 
-    let validator = value(validators, transformer.replace('/', '.'));
+    try {
 
-    if (!validator(res)) {
+        res = yield transform(transformer, cfg, ctx, res);
 
-        throw new e.InvalidOutputError(validator.errors);
+        let validator = value(validators, transformer.replace('/', '.'));
+
+        if (!validator(res)) {
+
+            throw new e.InvalidOutputError(validatorErrors(validator));
+        }
+
+        return res;
+    }
+    catch (err) {
+
+        logMsg.level = 'error';
+        logMsg.data.success = false;
+        logMsg.data.error = err;
+
+        throw err;
+    }
+    finally {
+
+        process.emit('cmd-server:log', logMsg);
     }
 
-    return res;
 };

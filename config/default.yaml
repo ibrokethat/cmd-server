@@ -16,6 +16,7 @@ errors:
   ConflictError:
     status: 409
     message: 'Resource already exists.'
+    displayMessages: true
   AuthenticationTimeOutError:
     status: 419
     message: 'Your session has expired.'
@@ -34,7 +35,7 @@ errors:
   ServiceUnavailableError:
     status: 503
     message: 'This service is currently not available.'
-  # cmd input output codes
+  # cmd codes
   InvalidInputError:
     status: 1000
     message: 'Invalid Input.'
@@ -44,3 +45,9 @@ errors:
   InvalidDataError:
     status: 1002
     message: 'Invalid Data.'
+  InvalidOperationError:
+    status: 1003
+    message: 'Invalid Operation.'
+  UnauthorizedAccessError:
+    status: 1004
+    message: 'Unauthorized Access Error'
