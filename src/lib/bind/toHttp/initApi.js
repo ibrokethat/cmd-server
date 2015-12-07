@@ -133,6 +133,9 @@ module.exports = curry(function initApi (app, cmds, cfg, apiConf) {
                         yield interceptor(cfgNoDb, ctx, data);
                     }
 
+                    //   reset the cmdCount after the interceptors
+                    ctx.cmdCount = 0;
+
                     //  stop anyone doing anything stupid later
                     //  we are sealing here not freezing so the cmdCount can be
                     //  incremented later
