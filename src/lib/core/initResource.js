@@ -5,23 +5,23 @@ const value = require('useful-value');
 const e = require('./errors');
 const validatorErrors = require('./validatorErrors');
 
-module.exports = curry(function initCmd (handler, validators, cfg, category, cmd, action) {
+module.exports = function initResource (handler, validators, cfg, category, resource, action) {
 
     let type = `${category}.${action}`;
 
     let logMsg = {
-        event: 'cmd-server:initCmd',
+        event: 'cmd-server:initResource',
         data: {
-            cmd: type,
+            resource: type,
             success: true
         }
     };
 
     try {
 
-        if (typeof cmd.index !== 'function') {
+        if (typeof resource.cmd !== 'function' && typeof resource.handler !== 'function') {
 
-            throw new TypeError(`${category}/${action} is not a function`);
+            throw new TypeError(`${category}/${action} has no associated cmd or handler`);
         }
 
         let paramsValidator = value(validators, `${type}.params`) || null;
@@ -30,7 +30,7 @@ module.exports = curry(function initCmd (handler, validators, cfg, category, cmd
         let dbValidator = value(validators, `${type}.db`) || null;
         let c = cfg;
 
-        //  make a unique cfg for ths cmd as it has a scoped validator
+        //  make a unique cfg for ths resource as it has a scoped validator
         if (dbValidator) {
 
             c = Object.create(cfg, {
@@ -46,7 +46,7 @@ module.exports = curry(function initCmd (handler, validators, cfg, category, cmd
             });
         }
 
-        return handler(type, paramsValidator, returnsValidator, curry(cmd.index)(c));
+        return handler(type, paramsValidator, returnsValidator, curry(resource.cmd || resource.handler)(c));
     }
     catch (err) {
 
@@ -60,5 +60,4 @@ module.exports = curry(function initCmd (handler, validators, cfg, category, cmd
 
         process.emit('cmd-server:log', logMsg);
     }
-
-});
+};

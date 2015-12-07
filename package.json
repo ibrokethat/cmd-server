@@ -57,8 +57,8 @@
   },
   "main": "build/index.js",
   "scripts": {
-    "build": "./node_modules/.bin/babel src --out-dir build --source-maps",
-    "build-watch": "./node_modules/.bin/babel src --out-dir build --source-maps -w",
+    "build": "./node_modules/.bin/babel src --out-dir build",
+    "build-watch": "./node_modules/.bin/babel src --out-dir build -w",
     "test": "./node_modules/.bin/mocha --compilers js:babel-core/register --colors --recursive -R spec --ui bdd ./test/**/*.test.js --NODE_ENV=test",
     "prepublish": "npm prune && npm run build",
     "jshint": "./node_modules/.bin/jshint -c .jshintrc --exclude-path .gitignore ./src",

@@ -7,7 +7,7 @@ log:
 
 
 paths:
-  cmds: '/test/app/cmds'
+  resources: '/test/app/resources'
   schemas: '/test/app/schemas'
   interceptors: '/test/app/lib/interceptors'
   transformers: '/test/app/lib/transformers'
@@ -30,25 +30,25 @@ apis:
           interceptors:
             - auth/validate
             - user/getCurrent
-          cmd: 'test/find'
+          resource: 'test/find'
           transformer: 'api/find'
 
 
     - path: '/create'
       methods:
         POST:
-          cmd: 'test/create'
+          resource: 'test/create'
 
 
     - path: '/update/:id'
       methods:
         PUT:
-          cmd: 'test/update'
+          resource: 'test/update'
         PATCH:
-          cmd: 'test/update'
+          resource: 'test/update'
 
 
     - path: '/params/:first/and/:second'
       methods:
         POST:
-          cmd: 'test/params'
+          resource: 'test/params'

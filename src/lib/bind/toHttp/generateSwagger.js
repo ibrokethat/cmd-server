@@ -96,7 +96,7 @@ module.exports = function generateSwagger (CONF) {
 
             acc[c.path] = reduce(c.methods, (acc, def, method) => {
 
-                let inputSchemaName = `${def.cmd.replace('/', '.')}.input`;
+                let inputSchemaName = `${def.resource.replace('/', '.')}.params`;
                 let inputSchema = schemas[inputSchemaName];
 
                 let apiSchemaName;

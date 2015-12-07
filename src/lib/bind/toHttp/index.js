@@ -8,7 +8,7 @@ const {forEach} = require('@ibrokethat/iter');
 const initApi = require('./initApi');
 const generateSwagger = require('./generateSwagger');
 
-module.exports = function* toHttp (CONF, cfg, cmds) {
+module.exports = function* toHttp (CONF, cfg) {
 
     //  create the http server
     let app = express();
@@ -18,9 +18,9 @@ module.exports = function* toHttp (CONF, cfg, cmds) {
     app.use(bodyParser.json()); // for parsing application/json
     app.use(bodyParser.urlencoded({extended: true})); // for parsing application/x-www-form-urlencoded
 
-    forEach(CONF.paths, initApi(app, cmds, cfg));
+    forEach(CONF.paths, initApi(app, cfg.handlers, cfg));
 
-    let swagger = generateSwagger(CONF, cmds);
+    let swagger = generateSwagger(CONF, cfg.handlers);
 
     app.get('/', (req, res, next) => {
         res.set('Content-Type', 'application/json');

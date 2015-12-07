@@ -6,7 +6,7 @@ const freeze = require('deep-freeze');
 const CONF = require('config');
 
 const e = require('./lib/core/errors');
-const initCmds = require('./lib/core/initCmds');
+const initResources = require('./lib/core/initResources');
 
 exports.e = e;
 
@@ -18,13 +18,14 @@ exports.init = function* () {
 
         //  we need to create a config object that is passed around at runtime
         const cfg = {
-            cmds: null,
+            cmds: {},
             db: null,
+            handlers: {},
             services: null
         };
 
         //  initialise all the cmds
-        const cmds = initCmds(cfg);
+        initResources(cfg);
 
         //  connect to databases
         if (CONF.dbs) {
@@ -45,12 +46,12 @@ exports.init = function* () {
             //  try app specific http config first
             if (fs.existsSync(`${global.ROOT}/lib/bind/toHttp`)) {
 
-                app.http = yield require(`${global.ROOT}/lib/bind/toHttp`)(CONF.apis, cfg, cmds);
+                app.http = yield require(`${global.ROOT}/lib/bind/toHttp`)(CONF.apis, cfg);
 
             }
             else {
 
-                app.http = yield require('./lib/bind/toHttp')(CONF.apis, cfg, cmds);
+                app.http = yield require('./lib/bind/toHttp')(CONF.apis, cfg);
             }
 
         }
@@ -58,27 +59,31 @@ exports.init = function* () {
         //  bind the cmds to a socket server
         if (CONF.socket) {
 
-            app.socket = yield require(`${global.ROOT}/lib/bind/toSocket`)(CONF.socket, cfg, cmds);
+            app.socket = yield require(`${global.ROOT}/lib/bind/toSocket`)(CONF.socket, cfg);
         }
 
         //  bind the cmds to a message broker
         if (CONF.message) {
 
-            app.message = yield require(`${global.ROOT}/lib/bind/toMessage`)(CONF.message, cfg, cmds);
+            app.message = yield require(`${global.ROOT}/lib/bind/toMessage`)(CONF.message, cfg);
         }
+
+        console.log(cfg)
 
         //  stop anyone doing anything stupid later
         freeze(cfg);
 
         return app;
     }
-    catch (e) {
+    catch (err) {
+
+        console.log(err)
 
         process.emit('cmd-server:log', {
             event: 'cmd-server:start',
             data: {
                 success: false,
-                error: e.stack
+                error: err.stack
             }
         });
 

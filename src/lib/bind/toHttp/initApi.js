@@ -13,7 +13,7 @@ const e = require('../../core/errors');
 const transform = require('../../core/transform');
 const schemas = require('../../core/schemas');
 
-module.exports = curry(function initApi (app, cmds, cfg, apiConf) {
+module.exports = curry(function initApi (app, handlers, cfg, apiConf) {
 
     let {path, methods} = apiConf;
 
@@ -33,8 +33,8 @@ module.exports = curry(function initApi (app, cmds, cfg, apiConf) {
             let interceptors = map(c.interceptors || [], (pathTo) => require(`${global.ROOT}${CONF.paths.interceptors}/${pathTo}`));
             let transformer = c.transformer || null;
 
-            let cmdPath = c.cmd.replace('/', '.');
-            let cmd = value(cmds, cmdPath);
+            let handlerPath = c.resource.replace('/', '.');
+            let handler = value(handlers, handlerPath);
 
             method = method.toLowerCase();
 
@@ -64,7 +64,7 @@ module.exports = curry(function initApi (app, cmds, cfg, apiConf) {
                     //    grab the request data to construct the data object
                     let {params, query, body} = req;
 
-                    let schema = value(schemas, `${cmdPath}.params`) || {};
+                    let schema = value(schemas, `${handlerPath}.params`) || {};
 
                     let data = reduce(schema.properties || {}, (acc, v, k) => {
 
@@ -141,9 +141,9 @@ module.exports = curry(function initApi (app, cmds, cfg, apiConf) {
                     //  incremented later
                     seal(ctx);
 
-                    //    now we update the response by calling the bound cmd
-                    let cmdResponse = yield cmd(ctx, data);
-                    let apiResponse = clone(cmdResponse);
+                    //    now we update the response by calling the bound handler
+                    let handlerResponse = yield handler(ctx, data);
+                    let apiResponse = clone(handlerResponse);
                     apiResponse._links = {};
 
                     //  transform the response
@@ -151,7 +151,6 @@ module.exports = curry(function initApi (app, cmds, cfg, apiConf) {
 
                         apiResponse = yield transform(transformer, cfgNoDb, ctx, apiResponse);
                     }
-
 
                     return apiResponse;
 

@@ -41,15 +41,15 @@ module.exports = curry(function* handler (cmdName, paramsValidator, returnsValid
             throw new e.InvalidParamsError(validatorErrors(paramsValidator));
         }
     }
-    catch (e) {
+    catch (err) {
 
         logMsg.data.success = false;
-        logMsg.data.stack = e.stack;
+        logMsg.data.stack = err.stack;
         logMsg.data.time.end = Date.now();
 
         process.emit('cmd-server:log', logMsg);
 
-        throw e;
+        throw err;
     }
 
     logMsg.data.time.end = Date.now();
