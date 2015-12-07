@@ -16,7 +16,8 @@ module.exports = curry(function* handler (cmdName, paramsValidator, returnsValid
             success: true,
             time: {
                 start: Date.now()
-            }
+            },
+            params: params
         }
     };
 
@@ -30,6 +31,8 @@ module.exports = curry(function* handler (cmdName, paramsValidator, returnsValid
             }
 
             data = yield fn(ctx, params);
+
+            logMsg.data.response = data;
 
             if (returnsValidator  && !returnsValidator(data)) {
 
