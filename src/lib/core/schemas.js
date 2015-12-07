@@ -1,29 +1,38 @@
 'use strict';
 
+const path = require('path');
 const fs = require('fs');
 
 const CONF = require('config');
-const {reduce} = require('@ibrokethat/iter');
+const {forEach} = require('@ibrokethat/iter');
 const loadSchema = require('./loadSchema');
 
-function load (dirname) {
+function load (dirname, schemas, p) {
 
-    let schemas = reduce(fs.readdirSync(dirname), (acc, fileName) => {
+    forEach(fs.readdirSync(dirname), (fileName) => {
 
-        if (/.yaml$/.test(fileName)) {
+        let item = path.resolve(dirname, fileName);
 
-            let schemaName = fileName.substr(0, fileName.length - 5);
+        let stat = fs.statSync(item);
 
-            acc[schemaName] = loadSchema(`${dirname}/${fileName}`);
+        if (stat && stat.isDirectory()) {
+
+            load(item, schemas, p ? `${p}.${fileName}`: `${fileName}`);
+        }
+        else if (/.yaml$/.test(fileName)) {
+
+            let schemaName = p ? `${p}.${fileName.substr(0, fileName.length - 5)}` : fileName.substr(0, fileName.length - 5);
+            schemas[schemaName] = loadSchema(`${dirname}/${fileName}`);
         }
 
-        return acc;
-
-    }, {});
+    });
 
     return schemas;
 }
 
-let schemas = load(`${process.cwd()}${CONF.paths.schemas}`);
+let schemas = {};
+
+schemas = load(`${process.cwd()}${CONF.paths.schemas}`, schemas);
+schemas = load(`${process.cwd()}${CONF.paths.cmds}`, schemas);
 
 module.exports = schemas;

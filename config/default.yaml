@@ -36,12 +36,12 @@ errors:
     status: 503
     message: 'This service is currently not available.'
   # cmd codes
-  InvalidInputError:
+  InvalidParamsError:
     status: 1000
-    message: 'Invalid Input.'
-  InvalidOutputError:
+    message: 'Invalid Params.'
+  InvalidReturnsError:
     status: 1001
-    message: 'Invalid Output.'
+    message: 'Invalid Returns.'
   InvalidDataError:
     status: 1002
     message: 'Invalid Data.'

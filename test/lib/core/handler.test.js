@@ -19,8 +19,8 @@ const e = require(`${process.cwd()}/src/lib/core/errors`);
 
 
 let fakes;
-let inputValidator;
-let outputValidator;
+let paramsValidator;
+let returnsValidator;
 let fn;
 let cmdName;
 
@@ -29,8 +29,8 @@ describe(modulePath, () => {
     beforeEach(() => {
 
         fakes = sinon.sandbox.create();
-        inputValidator = undefined;
-        outputValidator = undefined;
+        paramsValidator = undefined;
+        returnsValidator = undefined;
         fn = function* () {};
         cmdName = 'cmdName';
     });
@@ -38,21 +38,21 @@ describe(modulePath, () => {
     afterEach(() => {
 
         fakes = null;
-        inputValidator = undefined;
-        outputValidator = undefined;
+        paramsValidator = undefined;
+        returnsValidator = undefined;
         fn = null;
         cmdName = undefined;
     });
 
     describe('exceptions', () => {
 
-        it('should throw an error if the inputValidator invalidates the params', (done) => {
+        it('should throw an error if the paramsValidator invalidates the params', (done) => {
 
-            inputValidator = () => false;
-            inputValidator.errors = [];
-            inputValidator.toJSON = () => {}
+            paramsValidator = () => false;
+            paramsValidator.errors = [];
+            paramsValidator.toJSON = () => {}
 
-            let h = underTest(cmdName, inputValidator, outputValidator, fn);
+            let h = underTest(cmdName, paramsValidator, returnsValidator, fn);
 
             co(function* () {
 
@@ -67,21 +67,21 @@ describe(modulePath, () => {
                     error = e
                 }
 
-                expect(error).to.be.an.instanceOf(e.InvalidInputError);
+                expect(error).to.be.an.instanceOf(e.InvalidParamsError);
 
             }).then(done, done);
         });
 
 
-        it('should throw an error if the outputValidator invalidates the response', (done) => {
+        it('should throw an error if the returnsValidator invalidates the response', (done) => {
 
-            outputValidator = () => false;
-            outputValidator.errors = [];
-            outputValidator.toJSON = () => {}
+            returnsValidator = () => false;
+            returnsValidator.errors = [];
+            returnsValidator.toJSON = () => {}
 
             fn = function* () {return {id: {}}};
 
-            let h = underTest(cmdName, inputValidator, outputValidator, fn);
+            let h = underTest(cmdName, paramsValidator, returnsValidator, fn);
 
             co(function* () {
 
@@ -96,7 +96,7 @@ describe(modulePath, () => {
                     error = e;
                 }
 
-                expect(error).to.be.an.instanceOf(e.InvalidOutputError);
+                expect(error).to.be.an.instanceOf(e.InvalidReturnsError);
 
             }).then(done, done);
 
@@ -113,7 +113,7 @@ describe(modulePath, () => {
                 d.prop = 'fail';
             };
 
-            let h = underTest(cmdName, inputValidator, outputValidator, fn);
+            let h = underTest(cmdName, paramsValidator, returnsValidator, fn);
 
             co(function* () {
 
@@ -141,7 +141,7 @@ describe(modulePath, () => {
                 return {};
             };
 
-            let h = underTest(cmdName, inputValidator, outputValidator, fn);
+            let h = underTest(cmdName, paramsValidator, returnsValidator, fn);
 
             co(function* () {
 
@@ -181,7 +181,7 @@ describe(modulePath, () => {
                 return {}
             };
 
-            let h = underTest(cmdName, inputValidator, outputValidator, fn);
+            let h = underTest(cmdName, paramsValidator, returnsValidator, fn);
 
             co(function* () {
 
@@ -201,7 +201,7 @@ describe(modulePath, () => {
                 return {prop: d.prop * 10};
             };
 
-            let h = underTest(cmdName, inputValidator, outputValidator, fn);
+            let h = underTest(cmdName, paramsValidator, returnsValidator, fn);
 
             co(function* () {
 

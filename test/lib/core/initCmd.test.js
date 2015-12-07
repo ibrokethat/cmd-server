@@ -31,8 +31,8 @@ describe(modulePath, () => {
         fakes = sinon.sandbox.create();
         handler = fakes.spy();
         validators = {
-            ['test.get.input']: 'input',
-            ['test.get.output']: 'output'
+            ['test.get.params']: 'params',
+            ['test.get.returns']: 'returns'
         };
         cfg = {prop: 10};
         category = 'test';
@@ -92,7 +92,7 @@ describe(modulePath, () => {
 
             underTest(handler, validators, cfg, category, cmd, action);
 
-            expect(handler).not.to.have.been.calledWith(`${category}.${action}`, 'input', 'output');
+            expect(handler).not.to.have.been.calledWith(`${category}.${action}`, 'params', 'returns');
 
         });
 
@@ -101,7 +101,7 @@ describe(modulePath, () => {
 
             underTest(handler, validators, cfg, category, cmd, action);
 
-            expect(handler).to.have.been.calledWith(`${category}.${action}`, 'input', 'output');
+            expect(handler).to.have.been.calledWith(`${category}.${action}`, 'params', 'returns');
         });
 
 

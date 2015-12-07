@@ -44,7 +44,7 @@ describe(modulePath, () => {
 
     describe('exceptions', () => {
 
-        it('should throw a 400 error if the inputSchema invalidates the params', (done) => {
+        it('should throw a 400 error if the paramsSchema invalidates the params', (done) => {
 
             co(function* () {
 

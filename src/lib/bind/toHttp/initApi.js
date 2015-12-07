@@ -64,7 +64,7 @@ module.exports = curry(function initApi (app, cmds, cfg, apiConf) {
                     //    grab the request data to construct the data object
                     let {params, query, body} = req;
 
-                    let schema = value(schemas, `${cmdPath}.input`) || {};
+                    let schema = value(schemas, `${cmdPath}.params`) || {};
 
                     let data = reduce(schema.properties || {}, (acc, v, k) => {
 
@@ -172,7 +172,7 @@ module.exports = curry(function initApi (app, cmds, cfg, apiConf) {
 
                     switch (true) {
 
-                        case (err instanceof e.InvalidInputError):
+                        case (err instanceof e.InvalidParamsError):
 
                             if (ctx.cmdCount === 0) {
 
@@ -189,7 +189,7 @@ module.exports = curry(function initApi (app, cmds, cfg, apiConf) {
                             error = new e.InternalServerError(err.errors);
                             break;
 
-                        case (err instanceof e.InvalidOutputError):
+                        case (err instanceof e.InvalidReturnsError):
 
                             error = new e.InternalServerError(err.errors);
                             break;

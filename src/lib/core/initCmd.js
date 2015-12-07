@@ -24,9 +24,9 @@ module.exports = curry(function initCmd (handler, validators, cfg, category, cmd
             throw new TypeError(`${category}/${action} is not a function`);
         }
 
-        let inputValidator = value(validators, `${type}.input`) || null;
+        let paramsValidator = value(validators, `${type}.params`) || null;
 
-        let outputValidator = value(validators, `${type}.output`) || null;
+        let returnsValidator = value(validators, `${type}.returns`) || null;
         let dbValidator = value(validators, `${type}.db`) || null;
         let c = cfg;
 
@@ -46,7 +46,7 @@ module.exports = curry(function initCmd (handler, validators, cfg, category, cmd
             });
         }
 
-        return handler(type, inputValidator, outputValidator, curry(cmd.index)(c));
+        return handler(type, paramsValidator, returnsValidator, curry(cmd.index)(c));
     }
     catch (err) {
 

@@ -5,7 +5,7 @@ const freeze = require('deep-freeze');
 const e = require('./errors');
 const validatorErrors = require('./validatorErrors');
 
-module.exports = curry(function* handler (cmdName, inputValidator, outputValidator, fn, ctx, params) {
+module.exports = curry(function* handler (cmdName, paramsValidator, returnsValidator, fn, ctx, params) {
 
     let data;
 
@@ -22,7 +22,7 @@ module.exports = curry(function* handler (cmdName, inputValidator, outputValidat
 
     try {
 
-        if (!inputValidator || inputValidator(params)) {
+        if (!paramsValidator || paramsValidator(params)) {
 
             if (params) {
 
@@ -31,14 +31,14 @@ module.exports = curry(function* handler (cmdName, inputValidator, outputValidat
 
             data = yield fn(ctx, params);
 
-            if (outputValidator  && !outputValidator(data)) {
+            if (returnsValidator  && !returnsValidator(data)) {
 
-                throw new e.InvalidOutputError(validatorErrors(outputValidator));
+                throw new e.InvalidReturnsError(validatorErrors(returnsValidator));
             }
         }
         else {
 
-            throw new e.InvalidInputError(validatorErrors(inputValidator));
+            throw new e.InvalidParamsError(validatorErrors(paramsValidator));
         }
     }
     catch (e) {

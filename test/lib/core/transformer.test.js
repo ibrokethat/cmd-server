@@ -86,7 +86,7 @@ describe(modulePath, () => {
                     error = e
                 }
 
-                expect(error).to.be.an.instanceOf(e.InvalidOutputError);
+                expect(error).to.be.an.instanceOf(e.InvalidReturnsError);
 
             }).then(done, done);
         });
@@ -113,7 +113,7 @@ describe(modulePath, () => {
                     error = e
                 }
 
-                expect(error).to.be.an.instanceOf(e.InvalidOutputError);
+                expect(error).to.be.an.instanceOf(e.InvalidReturnsError);
 
             }).then(done, done);
         });
@@ -137,7 +137,7 @@ describe(modulePath, () => {
                     error = e
                 }
 
-                expect(error).to.be.an.instanceOf(e.InvalidOutputError);
+                expect(error).to.be.an.instanceOf(e.InvalidReturnsError);
 
             }).then(done, done);
         });
