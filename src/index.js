@@ -1,7 +1,7 @@
 'use strict';
 
 const fs = require('fs');
-const freeze = require('deep-freeze');
+// const freeze = require('deep-freeze');
 
 const CONF = require('config');
 
@@ -17,7 +17,7 @@ exports.init = function* () {
         const app = {};
 
         //  we need to create a config object that is passed around at runtime
-        const cfg = {
+        let cfg = {
             cmds: {},
             db: null,
             handlers: {},
@@ -68,16 +68,14 @@ exports.init = function* () {
             app.message = yield require(`${global.ROOT}/lib/bind/toMessage`)(CONF.message, cfg);
         }
 
-        console.log(cfg)
-
         //  stop anyone doing anything stupid later
-        freeze(cfg);
+        // freeze(cfg);
 
         return app;
     }
     catch (err) {
 
-        console.log(err)
+        console.log(err);
 
         process.emit('cmd-server:log', {
             event: 'cmd-server:start',
