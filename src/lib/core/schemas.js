@@ -33,6 +33,6 @@ function load (dirname, schemas, p) {
 let schemas = {};
 
 schemas = load(`${process.cwd()}${CONF.paths.schemas}`, schemas);
-schemas = load(`${process.cwd()}${CONF.paths.resources}`, schemas);
+schemas = load(`${global.ROOT || process.cwd()}${CONF.paths.resources}`, schemas);
 
 module.exports = schemas;
