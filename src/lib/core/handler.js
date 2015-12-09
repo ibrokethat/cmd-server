@@ -46,6 +46,7 @@ module.exports = curry(function* handler (cmdName, paramsValidator, returnsValid
     }
     catch (err) {
 
+        logMsg.level = 'error';
         logMsg.data.success = false;
         logMsg.data.stack = err.stack;
         logMsg.data.time.end = Date.now();

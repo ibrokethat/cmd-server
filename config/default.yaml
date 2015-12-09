@@ -45,9 +45,12 @@ errors:
   InvalidDataError:
     status: 1002
     message: 'Invalid Data.'
+  InvalidTransformError:
+    status: 1004
+    message: 'Invalid Transform.'
   InvalidOperationError:
-    status: 1003
+    status: 1005
     message: 'Invalid Operation.'
   UnauthorizedAccessError:
-    status: 1004
+    status: 1006
     message: 'Unauthorized Access Error'

@@ -185,12 +185,17 @@ module.exports = curry(function initApi (app, handlers, cfg, apiConf) {
 
                         case (err instanceof e.InvalidDataError):
 
-                            error = new e.InternalServerError(err.errors);
+                            error = new e.InternalServerError(err);
                             break;
 
                         case (err instanceof e.InvalidReturnsError):
 
-                            error = new e.InternalServerError(err.errors);
+                            error = new e.InternalServerError(err);
+                            break;
+
+                        case (err instanceof e.InvalidTransformError):
+
+                            error = new e.InvalidTransformError(err);
                             break;
 
                         case (!(err instanceof e.ExtendableError)):
@@ -208,6 +213,7 @@ module.exports = curry(function initApi (app, handlers, cfg, apiConf) {
 
                     res.status(error.status).send(apiResponse);
 
+                    logMsg.level = 'error';
                     logMsg.data.status = error.status;
                     logMsg.data.error = error.messages;
                     logMsg.data.stack = error.stackTraces;
