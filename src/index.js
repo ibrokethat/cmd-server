@@ -21,7 +21,7 @@ exports.init = function* () {
             cmds: {},
             db: null,
             handlers: {},
-            services: null
+            service: null
         };
 
         //  initialise all the cmds
@@ -36,9 +36,8 @@ exports.init = function* () {
         //  connect to services
         if (CONF.services) {
 
-            cfg.services = yield require(`${global.ROOT}/lib/cfg/services`)(CONF.services);
+            cfg.service = yield require(`${global.ROOT}/lib/services`)(CONF.services);
         }
-
 
         //  bind the cmds to a http server
         if (CONF.apis) {

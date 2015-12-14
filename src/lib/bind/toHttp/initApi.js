@@ -38,6 +38,7 @@ module.exports = curry(function initApi (app, handlers, cfg, apiConf) {
 
             method = method.toLowerCase();
 
+            // generic handler
             app[method](path, (req, res) => {
 
                 let logMsg = {
@@ -59,73 +60,81 @@ module.exports = curry(function initApi (app, handlers, cfg, apiConf) {
                     }
                 });
 
-                co(function* () {
 
-                    //    grab the request data to construct the data object
-                    let {params, query, body} = req;
+                //  map data from headers and http conf
+                if (c.ctx) {
 
-                    let schema = value(schemas, `${handlerPath}.params`) || {};
+                    if (c.ctx.params) {
 
-                    let data = reduce(schema.properties || {}, (acc, v, k) => {
+                        forEach(c.ctx.params, (v, k) => {
 
-                        switch (true) {
-
-                            case (params.hasOwnProperty(k)):
-
-                                logMsg.data.params = params;
-                                acc[k] = params[k];
-                                break;
-
-                            case (query.hasOwnProperty(k)):
-
-                                logMsg.data.query = query;
-                                acc[k] = query[k];
-                                break;
-
-                            case (body.hasOwnProperty(k)):
-
-                                logMsg.data.body = body;
-                                acc[k] = body[k];
-                                break;
-                        }
-                        return acc;
-
-                    }, {});
-
-                    //  map data from headers and http conf
-                    if (c.ctx) {
-
-                        if (c.ctx.params) {
-
-                            forEach(c.ctx.params, (v, k) => {
-
-                                Object.defineProperty(ctx, k, {
-                                    value: v,
-                                    enumerable: true
-                                });
+                            Object.defineProperty(ctx, k, {
+                                value: v,
+                                enumerable: true
                             });
-                        }
-
-                        if (c.ctx.headers) {
-
-                            forEach(c.ctx.headers, (v, k) => {
-
-                                Object.defineProperty(ctx, k, {
-                                    value: req.headers[v.toLowerCase()],
-                                    enumerable: true
-                                });
-                            });
-                        }
+                        });
                     }
 
-                    // create a version of the cfg with no access to the data base
-                    let cfgNoDb = Object.create(cfg, {
-                        db: {
-                            get () {
-                                throw new ReferenceError('Access to data base not allowed at this point in time');
-                            }
+                    if (c.ctx.headers) {
+
+                        forEach(c.ctx.headers, (v, k) => {
+
+                            Object.defineProperty(ctx, k, {
+                                value: req.headers[v.toLowerCase()],
+                                enumerable: true
+                            });
+                        });
+                    }
+                }
+
+
+                if (ctx.proxy) {
+
+                    ctx.req = req;
+                }
+
+                // grab the request data to construct the data object
+                let {params, query, body} = req;
+
+                let schema = value(schemas, `${handlerPath}.params`) || {};
+
+                let data = reduce(schema.properties || {}, (acc, v, k) => {
+
+                    switch (true) {
+
+                        case (params.hasOwnProperty(k)):
+
+                            logMsg.data.params = params;
+                            acc[k] = params[k];
+                            break;
+
+                        case (query.hasOwnProperty(k)):
+
+                            logMsg.data.query = query;
+                            acc[k] = query[k];
+                            break;
+
+                        case (body.hasOwnProperty(k)):
+
+                            logMsg.data.body = body;
+                            acc[k] = body[k];
+                            break;
+                    }
+                    return acc;
+
+                }, {});
+
+
+                // create a version of the cfg with no access to the data base
+                let cfgNoDb = Object.create(cfg, {
+                    db: {
+                        get () {
+                            throw new ReferenceError('Access to data base not allowed at this point in time');
                         }
-                    });
+                    }
+                });
+
+                co(function* () {
 
                     //   run our interceptor stack
                     for (let interceptor of interceptors) {
@@ -139,33 +148,54 @@ module.exports = curry(function initApi (app, handlers, cfg, apiConf) {
                     //  stop anyone doing anything stupid later
                     //  we are sealing here not freezing so the cmdCount can be
                     //  incremented later
-                    seal(ctx);
 
-                    //    now we update the response by calling the bound handler
-                    let handlerResponse = yield handler(ctx, data);
-                    let apiResponse = clone(handlerResponse);
-                    apiResponse._links = {};
+                    if (ctx.proxy) {
 
-                    //  transform the response
-                    if (transformer) {
+                        let handlerResponse = yield handler(ctx, data);
+                        handlerResponse.pipe(res);
 
-                        apiResponse = yield transform(transformer, cfgNoDb, ctx, apiResponse);
+                        return true;
+                    }
+                    else {
+
+                        seal(ctx);
+
+                        //    now we update the response by calling the bound handler
+                        let handlerResponse = yield handler(ctx, data);
+                        let apiResponse = clone(handlerResponse);
+                        apiResponse._links = {};
+
+                        //  transform the response
+                        if (transformer) {
+
+                            apiResponse = yield transform(transformer, cfgNoDb, ctx, apiResponse);
+                        }
+
+                        return apiResponse;
                     }
 
-                    return apiResponse;
 
                 }).then((apiResponse) => {
 
                     let status = method === 'post' ? 201 : 200;
 
-                    res.status(status).send(apiResponse);
+                    if (!ctx.proxy) {
+
+                        res.status(status).send(apiResponse);
+                    }
 
                     logMsg.data.status = status;
                     logMsg.data.time.end = Date.now();
 
                     process.emit('cmd-server:log', logMsg);
 
+
                 }).catch((err) => {
+
+                    if (ctx.proxy) {
+
+                        return err;
+                    }
 
                     let error = err;
 

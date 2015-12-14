@@ -60,7 +60,7 @@ module.exports = curry(function* handler (cmdName, paramsValidator, returnsValid
 
     process.emit('cmd-server:log', logMsg);
 
-    if (data) {
+    if (!ctx.proxy && data) {
 
         freeze(data);
     }
@@ -71,5 +71,4 @@ module.exports = curry(function* handler (cmdName, paramsValidator, returnsValid
     }
 
     return data;
-
 });
