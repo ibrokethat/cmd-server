@@ -177,7 +177,7 @@ module.exports = curry(function initApi (app, handlers, cfg, apiConf) {
 
                 }).then((apiResponse) => {
 
-                    let status = method === 'post' ? 201 : 200;
+                    let status = c.resCode || (method === 'post' ? 201 : 200);
 
                     if (!ctx.proxy) {
 
