@@ -35,6 +35,10 @@ const generateParameters = (c, method, def, schema) => {
 
     const gen = (schema) => {
 
+        if (!schema.properties) {
+            return;
+        }
+
         return reduce(schema.properties, (acc, v, k) => {
 
             if (k === '$ref') {
