@@ -13,6 +13,7 @@ module.exports = curry(function* handler (cmdName, paramsValidator, returnsValid
         event: 'cmd-server:cmd',
         data: {
             cmd: cmdName,
+            level: 'debug',
             success: true,
             time: {
                 start: Date.now()
