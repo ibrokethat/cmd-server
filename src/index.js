@@ -50,7 +50,16 @@ exports.init = function* () {
         //  connect to services
         if (CONF.services) {
 
-            cfg.service = yield require(`${global.ROOT}/lib/services`)(CONF.services);
+            //  try app specific services first
+            if (fs.existsSync(`${global.ROOT}/lib/services`)) {
+
+                cfg.service = yield require(`${global.ROOT}/lib/services`)(CONF.services);
+            }
+            else {
+
+                cfg.service = yield require('./lib/cfg/services')(CONF.services);
+            }
+
         }
 
         //  bind the cmds to a http server
