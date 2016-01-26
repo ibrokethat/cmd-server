@@ -1,6 +1,6 @@
 'use strict';
 
-const {e} = require('@ibrokethat/cmd-server');
+const {e} = require('../../../../core/errors');
 const curry = require('@ibrokethat/curry');
 const requireDir = require('require-dir');
 const helpers = requireDir('../helpers');

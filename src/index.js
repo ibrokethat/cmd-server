@@ -77,7 +77,15 @@ exports.init = function* () {
         //  bind the cmds to a message broker
         if (CONF.message) {
 
-            app.message = yield require(`${global.ROOT}/lib/bind/toMessage`)(CONF.message, cfg);
+            //  try app specific message config first
+            if (fs.existsSync(`${global.ROOT}/lib/bind/toHttp`)) {
+
+                app.message = yield require(`${global.ROOT}/lib/bind/toMessage`)(CONF.message, cfg);
+            }
+            else {
+
+                app.message = yield require('./lib/bind/toMessage')(CONF.message, cfg);
+            }
         }
 
         //  stop anyone doing anything stupid later

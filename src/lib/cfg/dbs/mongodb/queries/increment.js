@@ -1,7 +1,7 @@
 'use strict';
 
-const {e} = require('@ibrokethat/cmd-server');
 const curry = require('@ibrokethat/curry');
+const {e} = require('../../../../core/errors');
 
 module.exports = curry(function* increment (db, collection, _id, ...args) {
 

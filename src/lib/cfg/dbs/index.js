@@ -3,8 +3,7 @@
 
 const {map, reduce} = require('@ibrokethat/iter');
 
-
-function* generateQueries (conf) {
+module.exports = function* index (conf) {
 
     let dbs = yield map(conf, (c) => require(`./${c.type}/queries`)(c));
 
@@ -14,18 +13,4 @@ function* generateQueries (conf) {
         return acc;
 
     }, {});
-}
-
-
-function* runScripts (conf) {
-
-    yield map(conf, (c) => require(`./${c.type}/scripts`)(c));
-}
-
-
-module.exports = function* index (conf) {
-
-    yield runScripts(conf);
-
-    return yield generateQueries(conf);
 };
