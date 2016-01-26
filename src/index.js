@@ -30,7 +30,21 @@ exports.init = function* () {
         //  connect to databases
         if (CONF.dbs) {
 
-            cfg.db = yield require(`${global.ROOT}/lib/dbs`)(CONF.dbs);
+            //  run app specific db initialisation scripts first
+            if (fs.existsSync(`${global.ROOT}/dbscripts`)) {
+
+                yield require(`${global.ROOT}/dbscripts`)(CONF.dbs);
+            }
+
+            //  try app specific db query first
+            if (fs.existsSync(`${global.ROOT}/lib/dbs`)) {
+
+                cfg.db = yield require(`${global.ROOT}/lib/dbs`)(CONF.dbs);
+            }
+            else {
+
+                cfg.db = yield require('./lib/cfg/dbs')(CONF.dbs);
+            }
         }
 
         //  connect to services
@@ -46,7 +60,6 @@ exports.init = function* () {
             if (fs.existsSync(`${global.ROOT}/lib/bind/toHttp`)) {
 
                 app.http = yield require(`${global.ROOT}/lib/bind/toHttp`)(CONF.apis, cfg);
-
             }
             else {
 
