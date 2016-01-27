@@ -26,9 +26,11 @@
     "express": "^4.13.3",
     "is-my-json-valid": "^2.12.2",
     "js-yaml": "^3.4.3",
+    "mongodb": "^2.1.4",
     "mongodb-promisified": "^1.0.3",
     "path-to-regexp": "^1.2.1",
     "require-all": "^1.1.0",
+    "require-dir": "^0.3.0",
     "useful-value": "0.0.4"
   },
   "devDependencies": {

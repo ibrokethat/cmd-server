@@ -30,13 +30,36 @@ exports.init = function* () {
         //  connect to databases
         if (CONF.dbs) {
 
-            cfg.db = yield require(`${global.ROOT}/lib/dbs`)(CONF.dbs);
+            //  run app specific db initialisation scripts first
+            if (fs.existsSync(`${global.ROOT}/dbscripts`)) {
+
+                yield require(`${global.ROOT}/dbscripts`)(CONF.dbs);
+            }
+
+            //  try app specific db query first
+            if (fs.existsSync(`${global.ROOT}/lib/dbs`)) {
+
+                cfg.db = yield require(`${global.ROOT}/lib/dbs`)(CONF.dbs);
+            }
+            else {
+
+                cfg.db = yield require('./lib/cfg/dbs')(CONF.dbs);
+            }
         }
 
         //  connect to services
         if (CONF.services) {
 
-            cfg.service = yield require(`${global.ROOT}/lib/services`)(CONF.services);
+            //  try app specific services first
+            if (fs.existsSync(`${global.ROOT}/lib/services`)) {
+
+                cfg.service = yield require(`${global.ROOT}/lib/services`)(CONF.services);
+            }
+            else {
+
+                cfg.service = yield require('./lib/cfg/services')(CONF.services);
+            }
+
         }
 
         //  bind the cmds to a http server
@@ -46,7 +69,6 @@ exports.init = function* () {
             if (fs.existsSync(`${global.ROOT}/lib/bind/toHttp`)) {
 
                 app.http = yield require(`${global.ROOT}/lib/bind/toHttp`)(CONF.apis, cfg);
-
             }
             else {
 
@@ -64,7 +86,15 @@ exports.init = function* () {
         //  bind the cmds to a message broker
         if (CONF.message) {
 
-            app.message = yield require(`${global.ROOT}/lib/bind/toMessage`)(CONF.message, cfg);
+            //  try app specific message config first
+            if (fs.existsSync(`${global.ROOT}/lib/bind/toHttp`)) {
+
+                app.message = yield require(`${global.ROOT}/lib/bind/toMessage`)(CONF.message, cfg);
+            }
+            else {
+
+                app.message = yield require('./lib/bind/toMessage')(CONF.message, cfg);
+            }
         }
 
         //  stop anyone doing anything stupid later
