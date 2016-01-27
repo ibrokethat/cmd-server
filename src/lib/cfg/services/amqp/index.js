@@ -3,6 +3,7 @@
 const amqp = require('supermyx');
 
 module.exports = function* publishAmqp (CONF) {
+
     return {
 
         queue (channel, message) {

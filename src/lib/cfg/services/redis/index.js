@@ -1,17 +1,22 @@
 'use strict';
 
-module.exports = function redis () {
+const Redis = require('ioredis');
+
+module.exports = function redisConnect (CONF) {
+
+    const redis = new Redis(CONF.port, CONF.host);
 
     return {
 
-        set (/*k, v*/) {
+        *get (k) {
 
-            //return redis.set(k, v); // return a promise
+            return yield redis.get(k);
         },
 
-        get (/*k*/) {
+        *set (k, v) {
 
-            //return redis.get(k); // return a promise
+            yield redis.set(k, v);
         }
+
     };
 };
