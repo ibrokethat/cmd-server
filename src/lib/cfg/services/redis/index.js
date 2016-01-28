@@ -31,12 +31,41 @@ module.exports = function redisConnect (CONF) {
 
         *get (k) {
 
-            return yield redis.get(k);
+            let r = yield redis.get(k);
+
+            if (r instanceof Error) {
+
+                process.emit('cmd-server:log', {
+                    event: 'cmd-server:redisGet',
+                    level: 'error',
+                    data: {
+                        key: k
+                    }
+
+                });
+            }
+
+            return JSON.parse(r);
         },
 
-        *set (k, v) {
+        * set (k, v) {
 
-            yield redis.set(k, v);
+            const r = yield redis.set(k, JSON.stringify(v));
+
+            if (r instanceof Error) {
+
+                process.emit('cmd-server:log', {
+                    event: 'cmd-server:redisSet',
+                    level: 'error',
+                    data: {
+                        key: k,
+                        value: v
+                    }
+
+                });
+            }
+
+            return r;
         }
 
     };
