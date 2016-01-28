@@ -17,7 +17,7 @@ module.exports = function generateProxy (CONF) {
     return function proxy (req) {
 
         let r = {
-            uri: `${CONF.protocol}${CONF.host}:{CONF.port}${req.url}`,
+            uri: `${CONF.protocol}${CONF.host}:${CONF.port}${req.url}`,
             method: req.method,
             headers: {
                 authorization: req.headers.authorization,
