@@ -18,6 +18,8 @@ module.exports = function* toMessage (CONF, cfg) {
 
         broker.subscribe(c.channel, (message, ack) => {
 
+            const {ctx, params} = message;
+
             let logMsg = {
                 event: 'cmd-server:subscriber',
                 data: {
@@ -25,13 +27,14 @@ module.exports = function* toMessage (CONF, cfg) {
                     handler: c.resource,
                     time: {
                         start: Date.now()
-                    }
+                    },
+                    ctx: ctx,
+                    params: params
                 }
             };
 
-            co(function* () {
 
-                const {ctx, params} = message;
+            co(function* () {
 
                 yield handler(ctx, params);
 

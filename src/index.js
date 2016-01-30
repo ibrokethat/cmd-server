@@ -53,11 +53,11 @@ exports.init = function* () {
             //  try app specific services first
             if (fs.existsSync(`${global.ROOT}/lib/services`)) {
 
-                cfg.service = yield require(`${global.ROOT}/lib/services`)(CONF.services);
+                cfg.services = yield require(`${global.ROOT}/lib/services`)(CONF.services);
             }
             else {
 
-                cfg.service = yield require('./lib/cfg/services')(CONF.services);
+                cfg.services = yield require('./lib/cfg/services')(CONF.services);
             }
 
         }
