@@ -21,7 +21,7 @@ let fakes;
 let dataStringDates;
 let dataDateDates;
 let date = new Date();
-let dateStr = date.toISOString();
+let dateStr = date.getTime();
 
 describe(modulePath, () => {
 

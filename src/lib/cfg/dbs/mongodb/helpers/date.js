@@ -6,6 +6,9 @@ const value = require('useful-value');
 //  mongo correctly
 //  need to keep the set updated with all date fields
 //  bit awkward, but not as painfull as mongoose - chortle
+//  they come in a JSON Schema datae formats,
+//  they get persisted as JS Dates for Mongo
+//  get them out as unix timestamps as that is fairly portable
 //  TODO: need to do arrays of items too...
 
 const params = new Set([
@@ -28,7 +31,7 @@ exports.get = function get (data) {
 
         if (date) {
 
-            value.assign(data, param, date.toISOString());
+            value.assign(data, param, date.getTime());
         }
     }
 };

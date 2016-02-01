@@ -89,6 +89,20 @@ class ExtendableError extends Error {
 
         return msgs;
     }
+
+    get internalMessages () {
+
+        let msgs = {
+            error: this.toString()
+        };
+
+        msgs.data = map(this.errors, (e) => {
+            return e.messages ? e.messages : e.toString();
+        });
+
+        return msgs;
+    }
+
 }
 
 

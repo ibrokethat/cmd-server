@@ -60,7 +60,7 @@ module.exports = function* toMessage (CONF, cfg) {
 
                     case (err instanceof e.InvalidDataError):
 
-                        error = new e.InternalServerError(err);
+                        error = new e.InvalidDataError(err.errors);
                         break;
 
                     case (err instanceof e.InvalidReturnsError):
@@ -81,7 +81,7 @@ module.exports = function* toMessage (CONF, cfg) {
 
                 logMsg.level = 'error';
                 logMsg.data.status = error.status;
-                logMsg.data.error = error.messages;
+                logMsg.data.error = error.internalMessages;
                 logMsg.data.stack = error.stackTraces;
                 logMsg.data.time.end = Date.now();
 
