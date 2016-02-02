@@ -1,7 +1,7 @@
 {
   "name": "@ibrokethat/cmd-server",
   "description": "nodejs application server, easily expose functionality over any protocol",
-  "version": "0.0.21",
+  "version": "0.0.22",
   "author": {
     "name": "Simon Jefford",
     "email": "si@ibrokethat.com"
