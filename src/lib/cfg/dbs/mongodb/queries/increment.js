@@ -9,7 +9,9 @@ module.exports = curry(function* increment (db, collection, _id, ...args) {
 
     try {
 
-        yield db.collection(collection).updateOne({_id}, {$inc: {[param]: amount}});
+        let query = {$inc: {}};
+        query.$inc = {[param]: amount};
+        yield db.collection(collection).updateOne({ _id }, query);
     }
     catch (err) {
 
