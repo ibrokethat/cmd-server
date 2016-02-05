@@ -49,6 +49,15 @@ module.exports = function* toMessage (CONF, cfg) {
 
             }).catch((err) => {
 
+                //If reject is true then the message will be rejected and put back onto the queue if requeue is true
+                //otherwise it will be discarded.
+
+                //reject and requeue
+                //ack(true, true);
+
+                //reject and discard
+                ack(true, false);
+
                 let error = err;
 
                 switch (true) {
@@ -84,6 +93,7 @@ module.exports = function* toMessage (CONF, cfg) {
                 logMsg.data.error = error.internalMessages;
                 logMsg.data.stack = error.stackTraces;
                 logMsg.data.time.end = Date.now();
+                logMsg.data.message = message;
 
                 process.emit('worker:log', logMsg);
 
