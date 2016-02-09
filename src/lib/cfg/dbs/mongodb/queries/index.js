@@ -9,12 +9,9 @@ const queries = requireDir(__dirname);
 
 module.exports = function* mongodb (conf) {
 
-    //  to do - add user:password, switch to env variables
-    const db_name = conf.name;
-    const port = conf.port;
-    const server = conf.server;
-
-    const db = yield MongoClient.connect('mongodb://' + server + ':' + port + '/' + db_name);
+    const uri = conf.uri;
+    const options = conf.options || {};
+    const db = yield MongoClient.connect(uri, options);
 
     let collections = yield db.collections();
 

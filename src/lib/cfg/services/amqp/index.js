@@ -4,13 +4,13 @@ const amqp = require('supermyx');
 
 module.exports = function publishAmqp (CONF) {
 
-    process.emit('cmd-server:log', {
-        event: 'cmd-server:publishAmqp',
-        data: {
-            exchanges: [CONF.wqexchange, CONF.psexchange],
-            url: CONF.options.url
-        }
-    });
+    // process.emit('cmd-server:log', {
+    //     event: 'cmd-server:publishAmqp',
+    //     data: {
+    //         exchanges: [CONF.wqexchange, CONF.psexchange],
+    //         url: CONF.options.url
+    //     }
+    // });
 
     return {
 
