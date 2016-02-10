@@ -5,7 +5,11 @@ const path = require('path');
 const CONF = require('config');
 
 const curry = require('@ibrokethat/curry');
-const {map} = require('@ibrokethat/iter');
+
+var _require = require('@ibrokethat/iter');
+
+const map = _require.map;
+
 const value = require('useful-value');
 
 const requireAll = require('require-all');
@@ -18,25 +22,22 @@ const validatorErrors = require('./validatorErrors');
 
 const transformers = requireAll(path.join(global.ROOT, CONF.paths.transformers));
 
-function next (transformer, v) {
+function next(transformer, v) {
 
-    if (v === '#') { // use same schema
+    if (v === '#') {
+        // use same schema
 
         return transformer;
-    }
-    else if (!/^\/#definitions\//.test(v)) {
+    } else if (!/^\/#definitions\//.test(v)) {
 
         let nextTransformer = v.split('#').pop();
 
         return nextTransformer;
-    }
-    else {
+    } else {
 
         return false;
     }
-
 }
-
 
 const transform = curry(function* (transformerName, cfg, ctx, res) {
 
@@ -45,7 +46,7 @@ const transform = curry(function* (transformerName, cfg, ctx, res) {
 
     if (!transformer) {
 
-        throw new ReferenceError(`${transformerName} does not exist`);
+        throw new ReferenceError(`${ transformerName } does not exist`);
     }
 
     let schema = value(schemas, path);
@@ -58,9 +59,7 @@ const transform = curry(function* (transformerName, cfg, ctx, res) {
 
             res = yield map(res, transform(nextTransformer, cfg, ctx));
         }
-
-    }
-    else {
+    } else {
 
         res = yield transformer(cfg, ctx, res);
 
@@ -70,7 +69,7 @@ const transform = curry(function* (transformerName, cfg, ctx, res) {
 
             let prop = schema.properties[key];
 
-            for(let k in prop) {
+            for (let k in prop) {
 
                 let v = prop[k];
 
@@ -81,9 +80,7 @@ const transform = curry(function* (transformerName, cfg, ctx, res) {
                         if there is more than one ref specified we need an easy
                         way of choosing which one to use at run time
                         probably need a factory style transformer
-
-
-                        let fnTransformer = fac(new Map([
+                          let fnTransformer = fac(new Map([
                             [
                                 (data) => data.doesSomePropExist, // transformers.user.match
                                 (data) => {transform(transformers.user.transform, schemas[user.api], cfg, ctx, data)}
@@ -93,11 +90,9 @@ const transform = curry(function* (transformerName, cfg, ctx, res) {
                                 (data) => {transform(transformers.href.transform, schemas[href.api], cfg, ctx, data)}
                             ]
                         ]));
-
-                        which would mean the transformers would need to export 2 methods
+                         which would mean the transformers would need to export 2 methods
                         match and transform
-
-                    */
+                     */
 
                 }
 
@@ -109,8 +104,7 @@ const transform = curry(function* (transformerName, cfg, ctx, res) {
 
                         res[key] = yield transform(nextTransformer, cfg, ctx, value);
                     }
-                }
-                else if (k === 'type' && v === 'array') {
+                } else if (k === 'type' && v === 'array') {
 
                     if (prop.items && prop.items.$ref) {
 
@@ -122,20 +116,18 @@ const transform = curry(function* (transformerName, cfg, ctx, res) {
                         }
                     }
                 }
-
             }
         }
     }
 
-
     return res;
 });
-
 
 module.exports = function* (transformer, cfg, ctx, res) {
 
     let logMsg = {
         event: 'cmd-server:transformer',
+        stat: true,
         data: {
             transformer: transformer,
             success: true
@@ -154,18 +146,15 @@ module.exports = function* (transformer, cfg, ctx, res) {
         }
 
         return res;
-    }
-    catch (err) {
+    } catch (err) {
 
         logMsg.level = 'error';
         logMsg.data.success = false;
         logMsg.data.error = err;
 
         throw err;
-    }
-    finally {
+    } finally {
 
         process.emit('cmd-server:log', logMsg);
     }
-
 };

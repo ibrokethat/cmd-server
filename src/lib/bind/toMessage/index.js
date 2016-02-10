@@ -5,8 +5,7 @@ const value = require('useful-value');
 const co = require('co');
 const e = require('../../core/errors');
 
-
-module.exports = function* toMessage (CONF, cfg) {
+module.exports = function* toMessage(CONF, cfg) {
 
     for (let c of CONF.subscribers) {
 
@@ -16,12 +15,12 @@ module.exports = function* toMessage (CONF, cfg) {
         const handler = value(cfg.handlers, handlerPath);
         const broker = amqp.consumer(CONF);
 
-        broker.subscribe(c.channel, (message, ack) => {
-
-            const {ctx, params} = message;
+        broker.subscribe(c.channel, function (message, ack) {
+            const ctx = message.ctx;
+            const params = message.params;
 
             let logMsg = {
-                event: 'cmd-server:subscriber',
+                stat: true,
                 data: {
                     channel: c.channel,
                     handler: c.resource,
@@ -33,24 +32,24 @@ module.exports = function* toMessage (CONF, cfg) {
                 }
             };
 
-
             co(function* () {
+
+                logMsg.event = 'cmd-server:subscriber:message';
+                process.emit('cmd-server:log', logMsg);
 
                 yield handler(ctx, params);
 
-            }).then(() => {
+            }).then(function () {
 
                 ack();
 
+                logMsg.event = 'cmd-server:subscriber:ack';
                 logMsg.data.status = 'success';
                 logMsg.data.time.end = Date.now();
 
-                process.emit('worker:log', logMsg);
+                process.emit('cmd-server:log', logMsg);
 
-            }).catch((err) => {
-
-                //If reject is true then the message will be rejected and put back onto the queue if requeue is true
-                //otherwise it will be discarded.
+            }).catch(function (err) {
 
                 //reject and requeue
                 //ack(true, true);
@@ -62,44 +61,42 @@ module.exports = function* toMessage (CONF, cfg) {
 
                 switch (true) {
 
-                    case (err instanceof e.InvalidParamsError):
+                    case err instanceof e.InvalidParamsError:
 
                         error = new e.BadRequestError(err.errors);
                         break;
 
-                    case (err instanceof e.InvalidDataError):
+                    case err instanceof e.InvalidDataError:
 
                         error = new e.InvalidDataError(err.errors);
                         break;
 
-                    case (err instanceof e.InvalidReturnsError):
+                    case err instanceof e.InvalidReturnsError:
 
                         error = new e.InternalServerError(err);
                         break;
 
-                    case (err instanceof e.InvalidTransformError):
+                    case err instanceof e.InvalidTransformError:
 
                         error = new e.InvalidTransformError(err);
                         break;
 
-                    case (!(err instanceof e.ExtendableError)):
+                    case !(err instanceof e.ExtendableError):
 
                         error = new e.InternalServerError(err);
                         break;
                 }
 
                 logMsg.level = 'error';
+                logMsg.event = 'cmd-server:subscriber:reject';
                 logMsg.data.status = error.status;
                 logMsg.data.error = error.internalMessages;
                 logMsg.data.stack = error.stackTraces;
                 logMsg.data.time.end = Date.now();
                 logMsg.data.message = message;
 
-                process.emit('worker:log', logMsg);
-
+                process.emit('cmd-server:log', logMsg);
             });
-
         });
     }
-
 };

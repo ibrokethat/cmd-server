@@ -5,12 +5,12 @@ const freeze = require('deep-freeze');
 const e = require('./errors');
 const validatorErrors = require('./validatorErrors');
 
-module.exports = curry(function* handler (cmdName, paramsValidator, returnsValidator, fn, ctx, params) {
+module.exports = curry(function* handler(cmdName, paramsValidator, returnsValidator, fn, ctx, params) {
 
     let data;
 
     let logMsg = {
-        event: 'cmd-server:cmd',
+        stat: true,
         data: {
             cmd: cmdName,
             level: 'debug',
@@ -35,18 +35,17 @@ module.exports = curry(function* handler (cmdName, paramsValidator, returnsValid
 
             logMsg.data.response = data;
 
-            if (returnsValidator  && !returnsValidator(data)) {
+            if (returnsValidator && !returnsValidator(data)) {
 
                 throw new e.InvalidReturnsError(validatorErrors(returnsValidator));
             }
-        }
-        else {
+        } else {
 
             throw new e.InvalidParamsError(validatorErrors(paramsValidator));
         }
-    }
-    catch (err) {
+    } catch (err) {
 
+        logMsg.event = 'cmd-server:cmd:error';
         logMsg.level = 'error';
         logMsg.data.success = false;
         logMsg.data.stack = err.stack;
@@ -57,6 +56,7 @@ module.exports = curry(function* handler (cmdName, paramsValidator, returnsValid
         throw err;
     }
 
+    logMsg.event = 'cmd-server:cmd:success';
     logMsg.data.time.end = Date.now();
 
     process.emit('cmd-server:log', logMsg);

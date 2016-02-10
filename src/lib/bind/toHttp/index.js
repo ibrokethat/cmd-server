@@ -34,6 +34,7 @@ module.exports = function* toHttp (CONF, cfg) {
 
     process.emit('cmd-server:log', {
         event: 'cmd-server:toHttp',
+        stat: true,
         data: {
             success: true,
             message: `http server started on port ${port}`

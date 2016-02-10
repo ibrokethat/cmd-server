@@ -5,7 +5,13 @@ const CONF = require('config');
 const co = require('co');
 const clone = require('@ibrokethat/clone');
 const curry = require('@ibrokethat/curry');
-const {forEach, map, reduce} = require('@ibrokethat/iter');
+
+var _require = require('@ibrokethat/iter');
+
+const forEach = _require.forEach;
+const map = _require.map;
+const reduce = _require.reduce;
+
 const seal = require('@ibrokethat/deep-seal');
 const value = require('useful-value');
 
@@ -13,11 +19,11 @@ const e = require('../../core/errors');
 const transform = require('../../core/transform');
 const schemas = require('../../core/schemas');
 
-module.exports = curry(function initApi (app, handlers, cfg, apiConf) {
+module.exports = curry(function initApi(app, handlers, cfg, apiConf) {
+    let path = apiConf.path;
+    let methods = apiConf.methods;
 
-    let {path, methods} = apiConf;
-
-    forEach(methods, (c, method) => {
+    forEach(methods, function (c, method) {
 
         let logMsg = {
             event: 'cmd-server:initApi',
@@ -30,7 +36,9 @@ module.exports = curry(function initApi (app, handlers, cfg, apiConf) {
 
         try {
 
-            let interceptors = map(c.interceptors || [], (pathTo) => require(`${global.ROOT}${CONF.paths.interceptors}/${pathTo}`));
+            let interceptors = map(c.interceptors || [], function (pathTo) {
+                return require(`${ global.ROOT }${ CONF.paths.interceptors }/${ pathTo }`);
+            });
             let transformer = c.transformer || null;
 
             let handlerPath = c.resource.replace('/', '.');
@@ -39,10 +47,11 @@ module.exports = curry(function initApi (app, handlers, cfg, apiConf) {
             method = method.toLowerCase();
 
             // generic handler
-            app[method](path, (req, res) => {
+            app[method](path, function (req, res) {
 
                 let logMsg = {
                     event: 'cmd-server:api',
+                    stat: true,
                     data: {
                         api: path,
                         method: method,
@@ -60,13 +69,12 @@ module.exports = curry(function initApi (app, handlers, cfg, apiConf) {
                     }
                 });
 
-
                 //  map data from headers and http conf
                 if (c.ctx) {
 
                     if (c.ctx.params) {
 
-                        forEach(c.ctx.params, (v, k) => {
+                        forEach(c.ctx.params, function (v, k) {
 
                             Object.defineProperty(ctx, k, {
                                 value: v,
@@ -77,7 +85,7 @@ module.exports = curry(function initApi (app, handlers, cfg, apiConf) {
 
                     if (c.ctx.headers) {
 
-                        forEach(c.ctx.headers, (v, k) => {
+                        forEach(c.ctx.headers, function (v, k) {
 
                             Object.defineProperty(ctx, k, {
                                 value: req.headers[v.toLowerCase()],
@@ -87,48 +95,47 @@ module.exports = curry(function initApi (app, handlers, cfg, apiConf) {
                     }
                 }
 
-
                 if (ctx.proxy) {
 
                     ctx.req = req;
                 }
 
                 // grab the request data to construct the data object
-                let {params, query, body} = req;
+                let params = req.params;
+                let query = req.query;
+                let body = req.body;
 
-                let schema = value(schemas, `${handlerPath}.params`) || {};
+                let schema = value(schemas, `${ handlerPath }.params`) || {};
 
-                let data = reduce(schema.properties || {}, (acc, v, k) => {
+                let data = reduce(schema.properties || {}, function (acc, v, k) {
 
                     switch (true) {
 
-                        case (params.hasOwnProperty(k)):
+                        case params.hasOwnProperty(k):
 
                             logMsg.data.params = params;
                             acc[k] = params[k];
                             break;
 
-                        case (query.hasOwnProperty(k)):
+                        case query.hasOwnProperty(k):
 
                             logMsg.data.query = query;
                             acc[k] = query[k];
                             break;
 
-                        case (body.hasOwnProperty(k)):
+                        case body.hasOwnProperty(k):
 
                             logMsg.data.body = body;
                             acc[k] = body[k];
                             break;
                     }
                     return acc;
-
                 }, {});
-
 
                 // create a version of the cfg with no access to the data base
                 let cfgNoDb = Object.create(cfg, {
                     db: {
-                        get () {
+                        get() {
                             throw new ReferenceError('Access to data base not allowed at this point in time');
                         }
                     }
@@ -155,8 +162,7 @@ module.exports = curry(function initApi (app, handlers, cfg, apiConf) {
                         handlerResponse.pipe(res);
 
                         return true;
-                    }
-                    else {
+                    } else {
 
                         seal(ctx);
 
@@ -173,9 +179,7 @@ module.exports = curry(function initApi (app, handlers, cfg, apiConf) {
 
                         return apiResponse;
                     }
-
-
-                }).then((apiResponse) => {
+                }).then(function (apiResponse) {
 
                     let status = c.resCode || (method === 'post' ? 201 : 200);
 
@@ -188,9 +192,7 @@ module.exports = curry(function initApi (app, handlers, cfg, apiConf) {
                     logMsg.data.time.end = Date.now();
 
                     process.emit('cmd-server:log', logMsg);
-
-
-                }).catch((err) => {
+                }).catch(function (err) {
 
                     if (ctx.proxy) {
 
@@ -201,34 +203,33 @@ module.exports = curry(function initApi (app, handlers, cfg, apiConf) {
 
                     switch (true) {
 
-                        case (err instanceof e.InvalidParamsError):
+                        case err instanceof e.InvalidParamsError:
 
                             if (ctx.cmdCount === 0) {
 
                                 error = new e.BadRequestError(err.errors);
-                            }
-                            else {
+                            } else {
 
                                 error = new e.InternalServerError(err.errors);
                             }
                             break;
 
-                        case (err instanceof e.InvalidDataError):
+                        case err instanceof e.InvalidDataError:
 
                             error = new e.InternalServerError(err);
                             break;
 
-                        case (err instanceof e.InvalidReturnsError):
+                        case err instanceof e.InvalidReturnsError:
 
                             error = new e.InternalServerError(err);
                             break;
 
-                        case (err instanceof e.InvalidTransformError):
+                        case err instanceof e.InvalidTransformError:
 
                             error = new e.InvalidTransformError(err);
                             break;
 
-                        case (!(err instanceof e.ExtendableError)):
+                        case !(err instanceof e.ExtendableError):
 
                             error = new e.InternalServerError(err);
                             break;
@@ -250,23 +251,16 @@ module.exports = curry(function initApi (app, handlers, cfg, apiConf) {
                     logMsg.data.time.end = Date.now();
 
                     process.emit('cmd-server:log', logMsg);
-
                 });
-
             });
-
-        }
-        catch (e) {
+        } catch (e) {
 
             logMsg.level = 'error';
             logMsg.data.success = false;
             logMsg.data.error = e;
-        }
-        finally {
+        } finally {
 
             process.emit('cmd-server:log', logMsg);
         }
-
     });
-
 });
