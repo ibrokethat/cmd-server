@@ -2,7 +2,7 @@
 
 const amqp = require('supermyx');
 
-module.exports = function publishAmqp(CONF) {
+module.exports = function publishAmqp (CONF) {
 
     return {
 
@@ -11,7 +11,7 @@ module.exports = function publishAmqp(CONF) {
             process.emit('cmd-server:log', {
                 event: 'cmd-server:publisher:queue',
                 data: {
-                    channel: channel, 
+                    channel: channel,
                     message: message
                 }
             });
