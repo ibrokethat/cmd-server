@@ -226,7 +226,7 @@ module.exports = curry(function initApi(app, handlers, cfg, apiConf) {
 
                         case err instanceof e.InvalidTransformError:
 
-                            error = new e.InvalidTransformError(err);
+                            error = err;
                             break;
 
                         case !(err instanceof e.ExtendableError):
