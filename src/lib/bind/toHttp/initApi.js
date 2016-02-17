@@ -129,6 +129,12 @@ module.exports = curry(function initApi(app, handlers, cfg, apiConf) {
                             acc[k] = body[k];
                             break;
                     }
+
+                    if (v.type === 'number') {
+
+                        acc[k] = parseFloat(acc[k]);
+                    }
+
                     return acc;
                 }, {});
 
