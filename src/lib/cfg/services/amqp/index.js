@@ -1,12 +1,14 @@
 'use strict';
 
 const amqp = require('supermyx');
+const clone = require('@ibrokethat/clone');
 
-module.exports = function publishAmqp (CONF) {
+module.exports = function publishAmqp(CONF) {
 
     return {
 
         queue(channel, message) {
+            let c = clone(CONF);
 
             process.emit('cmd-server:log', {
                 event: 'cmd-server:publisher:queue',
@@ -16,12 +18,13 @@ module.exports = function publishAmqp (CONF) {
                 }
             });
 
-            CONF.producer.exchange = CONF.wqexchange;
-            const broker = amqp.producer(CONF);
+            c.producer.exchange = c.wqexchange;
+            const broker = amqp.producer(c);
             return broker.publish(channel, message);
         },
 
         publish(channel, message) {
+            let c = clone(CONF);
 
             process.emit('cmd-server:log', {
                 event: 'cmd-server:publisher:publish',
@@ -31,8 +34,8 @@ module.exports = function publishAmqp (CONF) {
                 }
             });
 
-            CONF.producer.exchange = CONF.psexchange;
-            const broker = amqp.producer(CONF);
+            c.producer.exchange = c.psexchange;
+            const broker = amqp.producer(c);
             return broker.publish(channel, message);
         }
     };
