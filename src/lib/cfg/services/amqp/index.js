@@ -8,7 +8,9 @@ module.exports = function publishAmqp(CONF) {
     return {
 
         queue(channel, message) {
-            let c = clone(CONF);
+
+            const amqpOptions = {exchange: CONF.queue};
+            const broker = amqp.queue(CONF.host, amqpOptions).producer;
 
             process.emit('cmd-server:log', {
                 event: 'cmd-server:publisher:queue',
@@ -18,13 +20,13 @@ module.exports = function publishAmqp(CONF) {
                 }
             });
 
-            c.producer.exchange = c.wqexchange;
-            const broker = amqp.producer(c);
             return broker.publish(channel, message);
         },
 
         publish(channel, message) {
-            let c = clone(CONF);
+
+            const amqpOptions = {exchange: CONF.pubsub};
+            const broker = amqp.pubsub(CONF.host, amqpOptions).producer;
 
             process.emit('cmd-server:log', {
                 event: 'cmd-server:publisher:publish',
@@ -34,8 +36,6 @@ module.exports = function publishAmqp(CONF) {
                 }
             });
 
-            c.producer.exchange = c.psexchange;
-            const broker = amqp.producer(c);
             return broker.publish(channel, message);
         }
     };

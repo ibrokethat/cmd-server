@@ -7,13 +7,13 @@ const e = require('../../core/errors');
 
 module.exports = function* toMessage(CONF, cfg) {
 
-    for (let c of CONF.subscribers) {
+    const amqpOptions = {exchange: CONF.queue};
 
-        CONF.consumer.exchange = CONF.wqexchange;
+    for (let c of CONF.subscribers) {
 
         const handlerPath = c.resource.replace('/', '.');
         const handler = value(cfg.handlers, handlerPath);
-        const broker = amqp.consumer(CONF);
+        const broker = amqp.queue(CONF.host, amqpOptions).consumer;
 
         broker.subscribe(c.channel, function (message, ack) {
             const ctx = message.ctx;
@@ -38,7 +38,6 @@ module.exports = function* toMessage(CONF, cfg) {
                 process.emit('cmd-server:log', logMsg);
 
                 yield handler(ctx, params);
-
             }).then(function () {
 
                 ack();
@@ -48,7 +47,6 @@ module.exports = function* toMessage(CONF, cfg) {
                 logMsg.data.time.end = Date.now();
 
                 process.emit('cmd-server:log', logMsg);
-
             }).catch(function (err) {
 
                 //reject and requeue
