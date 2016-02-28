@@ -9,8 +9,7 @@ module.exports = function publishAmqp(CONF) {
 
         queue(channel, message) {
 
-            const amqpOptions = {exchange: CONF.queue};
-            const broker = amqp.queue(CONF.host, amqpOptions).producer;
+            const broker = amqp.workqueue(CONF.host).producer;
 
             process.emit('cmd-server:log', {
                 event: 'cmd-server:publisher:queue',
@@ -25,8 +24,7 @@ module.exports = function publishAmqp(CONF) {
 
         publish(channel, message) {
 
-            const amqpOptions = {exchange: CONF.pubsub};
-            const broker = amqp.pubsub(CONF.host, amqpOptions).producer;
+            const broker = amqp.pubsub(CONF.host).producer;
 
             process.emit('cmd-server:log', {
                 event: 'cmd-server:publisher:publish',

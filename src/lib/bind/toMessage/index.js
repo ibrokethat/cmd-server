@@ -7,13 +7,11 @@ const e = require('../../core/errors');
 
 module.exports = function* toMessage(CONF, cfg) {
 
-    const amqpOptions = {exchange: CONF.queue};
-
     for (let c of CONF.subscribers) {
 
         const handlerPath = c.resource.replace('/', '.');
         const handler = value(cfg.handlers, handlerPath);
-        const broker = amqp.queue(CONF.host, amqpOptions).consumer;
+        const broker = amqp.workqueue(CONF.host).consumer;
 
         broker.subscribe(c.channel, function (message, ack) {
             const ctx = message.ctx;
