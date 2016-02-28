@@ -34,7 +34,7 @@
     "request": "^2.67.0",
     "require-all": "^1.1.0",
     "require-dir": "^0.3.0",
-    "supermyx": "0.2.0",
+    "supermyx": "0.2.1",
     "useful-value": "0.0.4"
   },
   "devDependencies": {
