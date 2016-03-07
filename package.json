@@ -1,7 +1,7 @@
 {
   "name": "@ibrokethat/cmd-server",
   "description": "nodejs application server, easily expose functionality over any protocol",
-  "version": "0.0.34",
+  "version": "0.0.35",
   "author": {
     "name": "Simon Jefford",
     "email": "si@ibrokethat.com"
@@ -34,7 +34,7 @@
     "request": "^2.67.0",
     "require-all": "^1.1.0",
     "require-dir": "^0.3.0",
-    "supermyx": "0.2.1",
+    "supermyx": "0.2.2",
     "useful-value": "0.0.4"
   },
   "devDependencies": {
