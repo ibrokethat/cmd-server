@@ -105,7 +105,7 @@ describe(modulePath, () => {
     });
 
 
-    describe('immutable data', () => {
+    describe.skip('immutable data', () => {
 
         it('should freeze the params before calling it\'s function', (done) => {
 
