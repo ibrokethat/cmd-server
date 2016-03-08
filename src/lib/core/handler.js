@@ -1,9 +1,11 @@
 'use strict';
 
 const curry = require('@ibrokethat/curry');
-const freeze = require('deep-freeze');
+// const freeze = require('deep-freeze');
 const e = require('./errors');
 const validatorErrors = require('./validatorErrors');
+
+// commented out freeze, appears to have perf issues, could re-enable for non-production envs
 
 module.exports = curry(function* handler(cmdName, paramsValidator, returnsValidator, fn, ctx, params) {
 
@@ -26,10 +28,10 @@ module.exports = curry(function* handler(cmdName, paramsValidator, returnsValida
 
         if (!paramsValidator || paramsValidator(params)) {
 
-            if (params) {
+            // if (params) {
 
-                freeze(params);
-            }
+            //     freeze(params);
+            // }
 
             data = yield fn(ctx, params);
 
@@ -61,10 +63,10 @@ module.exports = curry(function* handler(cmdName, paramsValidator, returnsValida
 
     process.emit('cmd-server:log', logMsg);
 
-    if (!ctx.proxy && data) {
+    // if (!ctx.proxy && data) {
 
-        freeze(data);
-    }
+    //     freeze(data);
+    // }
 
     if (ctx.hasOwnProperty('cmdCount') && typeof ctx.cmdCount === 'number') {
 
