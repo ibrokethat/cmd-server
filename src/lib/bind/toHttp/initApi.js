@@ -66,6 +66,12 @@ module.exports = curry(function initApi(app, handlers, cfg, apiConf) {
                     }
                 });
 
+                //  always map the user agent
+                Object.defineProperty(ctx, 'userAgent', {
+                    value: req.headers['user-agent'],
+                    enumerable: true
+                });
+
                 //  map data from headers and http conf
                 if (c.ctx) {
 
