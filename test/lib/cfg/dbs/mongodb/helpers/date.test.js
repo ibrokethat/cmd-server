@@ -12,7 +12,7 @@ const sinon = require('sinon');
 
 chai.use(sinonChai);
 
-const modulePath = '/src/lib/dbs/mongodb/helpers/date';
+const modulePath = '/src/lib/cfg/dbs/mongodb/helpers/date';
 
 const underTest = require(`${process.cwd()}${modulePath}`);
 

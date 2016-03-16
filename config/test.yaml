@@ -17,6 +17,8 @@ apis:
   port: 3001
   global_request_timeout: 5000
   type: 'application/json' # can be overidden on per api basis below: todo
+  global_interceptors:
+    - version/control
   paths:
 
     - path: '/find/:id'

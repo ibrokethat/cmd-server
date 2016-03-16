@@ -1,7 +1,5 @@
 'use strict';
 
-global.ROOT = process.cwd() + '/src';
-
 const CONF = require('config');
 const co = require('co');
 
@@ -15,14 +13,16 @@ chai.use(sinonChai);
 
 const stubs = requireDir(`${process.cwd()}/test/stubs`);
 
-const modulePath = '/src/lib/dbs/mongodb/queries/remove';
+const modulePath = '/src/lib/cfg/dbs/mongodb/queries/increment';
 const underTest = require(`${process.cwd()}${modulePath}`);
 
 
 let fakes;
 let collectionName;
 let db;
-let params;
+let id;
+let param;
+let value;
 let returns;
 
 describe(modulePath, () => {
@@ -31,42 +31,48 @@ describe(modulePath, () => {
 
         fakes = sinon.sandbox.create();
         collectionName = 'test';
-        params = 'params';
+        id = 'id';
+        param = 'param';
+        value = 1;
         returns = {value: 'returns'};
     });
+
 
     afterEach(() => {
 
         fakes.restore();
         collectionName = null;
         db = null;
-        params = null;
+        id = null;
+        param = null;
+        value = null;
         returns = null;
     });
 
     describe('exceptions', () => {
 
-        it('should catch the error of the underlying query and then throw the correct error', (done) => {
+        it('should throw the correct error if the update does nothing', (done) => {
 
             co(function* () {
 
-                let db = stubs.mongodbCollection('findOneAndDelete', {value: null});
+                let db = stubs.mongodbCollection('updateOne', new Error());
 
                 let error = false;
 
                 try {
 
-                    yield underTest(db, collectionName, params);
+                    yield underTest(db, collectionName, id, param, value);
                 }
                 catch (e) {
 
                     error = e;
                 }
 
-                expect(error.name).to.equal('NotFoundError');
+                expect(error.name).to.equal('UnprocessableEntityError');
 
             }).then(done, done);
         });
+
     });
 
 
@@ -76,11 +82,10 @@ describe(modulePath, () => {
 
             co(function* () {
 
-                let db = stubs.mongodbCollection('findOneAndDelete', returns);
+                let db = stubs.mongodbCollection('updateOne', returns);
 
-                let r = yield underTest(db, collectionName, params);
-                expect(db.collection().findOneAndDelete).to.have.been.calledWith(params);
-                expect(r).to.equal(returns.value);
+                let r = yield underTest(db, collectionName, id, param, value);
+                expect(db.collection().updateOne).to.have.been.calledWith({_id: id}, {$inc: {[param]: value}});
 
             }).then(done, done);
         });

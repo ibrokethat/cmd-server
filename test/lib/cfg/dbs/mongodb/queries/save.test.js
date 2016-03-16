@@ -1,7 +1,5 @@
 'use strict';
 
-global.ROOT = process.cwd() + '/src';
-
 const CONF = require('config');
 const co = require('co');
 
@@ -15,7 +13,7 @@ chai.use(sinonChai);
 
 const stubs = requireDir(`${process.cwd()}/test/stubs`);
 
-const modulePath = '/src/lib/dbs/mongodb/queries/save';
+const modulePath = '/src/lib/cfg/dbs/mongodb/queries/save';
 const underTest = require(`${process.cwd()}${modulePath}`);
 
 

@@ -1,7 +1,6 @@
 'use strict';
 
 const amqp = require('supermyx');
-const clone = require('@ibrokethat/clone');
 
 module.exports = function publishAmqp(CONF) {
 

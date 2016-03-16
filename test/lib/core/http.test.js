@@ -181,7 +181,19 @@ describe(modulePath, () => {
 
     describe('interceptors', () => {
 
-        it('should run all the interceptors specified', (done) => {
+        it('should run all the global level interceptors specified', (done) => {
+
+            co(function* () {
+
+                let {body} = yield sa.get(`${HOST}/find/1`);
+
+                expect(body.ctx.version).to.be.true;
+
+            }).then(done, done);
+
+        });
+
+        it('should run all the api level interceptors specified', (done) => {
 
             co(function* () {
 
@@ -194,7 +206,7 @@ describe(modulePath, () => {
 
         });
 
-    })
+    });
 
 
     describe('params', () => {

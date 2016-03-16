@@ -1,7 +1,5 @@
 'use strict';
 
-global.ROOT = process.cwd() + '/src';
-
 const CONF = require('config');
 const co = require('co');
 
@@ -15,7 +13,7 @@ chai.use(sinonChai);
 
 const stubs = requireDir(`${process.cwd()}/test/stubs`);
 
-const modulePath = '/src/lib/dbs/mongodb/queries/query';
+const modulePath = '/src/lib/cfg/dbs/mongodb/queries/findOne';
 const underTest = require(`${process.cwd()}${modulePath}`);
 
 
@@ -25,7 +23,6 @@ let db;
 let params;
 let fields;
 let returns;
-let toArray;
 
 describe(modulePath, () => {
 
@@ -35,10 +32,7 @@ describe(modulePath, () => {
         collectionName = 'test';
         params = 'params';
         fields = 'fields';
-        returns = [];
-        toArray = {
-            toArray: () => returns
-        };
+        returns = {value: 'returns'};
     });
 
 
@@ -50,21 +44,32 @@ describe(modulePath, () => {
         params = null;
         fields = null;
         returns = null;
-        toArray = null;
     });
-
 
     describe('success', () => {
 
-        it('should call the underlying query correctly', (done) => {
+        it('should return an item if found', (done) => {
 
             co(function* () {
 
-                let db = stubs.mongodbCollection('find', toArray);
+                let db = stubs.mongodbCollection('findOne', returns);
 
                 let r = yield underTest(db, collectionName, params, fields);
-                expect(db.collection().find).to.have.been.calledWith(params, fields);
+                expect(db.collection().findOne).to.have.been.calledWith(params, fields);
                 expect(r).to.deep.equal(returns);
+
+            }).then(done, done);
+        });
+
+        it('should return an empty response if no item found', (done) => {
+
+            co(function* () {
+
+                let db = stubs.mongodbCollection('findOne', null);
+
+                let r = yield underTest(db, collectionName, params);
+                expect(db.collection().findOne).to.have.been.called;
+                expect(r).to.equal(null);
 
             }).then(done, done);
         });

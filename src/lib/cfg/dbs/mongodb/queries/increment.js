@@ -1,7 +1,7 @@
 'use strict';
 
 const curry = require('@ibrokethat/curry');
-const {e} = require('../../../../core/errors');
+const {UnprocessableEntityError} = require('../../../../core/errors');
 
 module.exports = curry(function* increment (db, collection, _id, ...args) {
 
@@ -15,7 +15,7 @@ module.exports = curry(function* increment (db, collection, _id, ...args) {
     }
     catch (err) {
 
-        throw new e.UnprocessableEntityError(err);
+        throw new UnprocessableEntityError(err);
     }
 
 });

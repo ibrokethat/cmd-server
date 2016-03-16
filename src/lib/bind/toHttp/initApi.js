@@ -6,11 +6,7 @@ const co = require('co');
 const clone = require('@ibrokethat/clone');
 const curry = require('@ibrokethat/curry');
 
-var _require = require('@ibrokethat/iter');
-
-const forEach = _require.forEach;
-const map = _require.map;
-const reduce = _require.reduce;
+const {forEach, map, reduce} = require('@ibrokethat/iter');
 
 const seal = require('@ibrokethat/deep-seal');
 const value = require('useful-value');
@@ -20,8 +16,9 @@ const transform = require('../../core/transform');
 const schemas = require('../../core/schemas');
 
 module.exports = curry(function initApi(app, handlers, cfg, apiConf) {
-    let path = apiConf.path;
-    let methods = apiConf.methods;
+
+    let {methods, path} = apiConf;
+    let {global_interceptors} = CONF.apis;
 
     forEach(methods, function (c, method) {
 
@@ -36,9 +33,9 @@ module.exports = curry(function initApi(app, handlers, cfg, apiConf) {
 
         try {
 
-            let interceptors = map(c.interceptors || [], function (pathTo) {
-                return require(`${ global.ROOT }${ CONF.paths.interceptors }/${ pathTo }`);
-            });
+            let ints = [...(global_interceptors || []), ...(c.interceptors || [])];
+            let interceptors = map(ints, (pathTo) => require(`${global.ROOT}${CONF.paths.interceptors}/${pathTo}`));
+
             let transformer = c.transformer || null;
 
             let handlerPath = c.resource.replace('/', '.');
