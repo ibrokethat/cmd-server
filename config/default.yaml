@@ -26,6 +26,9 @@ errors:
   UnprocessableEntityError:
     status: 422
     message: 'Unprocessable Entity.'
+  BlockedError:
+    status: 423
+    message: 'Blocked.'
   InternalServerError:
     status: 500
     message: 'Internal Server Error.'
