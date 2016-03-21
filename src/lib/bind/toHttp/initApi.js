@@ -5,6 +5,7 @@ const CONF = require('config');
 const co = require('co');
 const clone = require('@ibrokethat/clone');
 const curry = require('@ibrokethat/curry');
+const uuid = require('node-uuid');
 
 const {forEach, map, reduce} = require('@ibrokethat/iter');
 
@@ -46,25 +47,30 @@ module.exports = curry(function initApi(app, handlers, cfg, apiConf) {
             // generic handler
             app[method](path, function (req, res) {
 
-                let logMsg = {
-                    event: 'cmd-server:api',
-                    stat: true,
-                    data: {
-                        api: path,
-                        method: method,
-                        time: {
-                            start: Date.now()
-                        }
-                    }
-                };
 
                 // create a ctx object
                 let ctx = Object.create({}, {
                     cmdCount: {
                         value: 0,
                         writable: true
+                    },
+                    uuid: {
+                        value: uuid.v4()
                     }
                 });
+
+                let logMsg = {
+                    event: 'cmd-server:api',
+                    stat: true,
+                    data: {
+                        api: path,
+                        uuid: ctx.uuid,
+                        method: method,
+                        time: {
+                            start: Date.now()
+                        }
+                    }
+                };
 
                 //  always map the user agent
                 Object.defineProperty(ctx, 'userAgent', {

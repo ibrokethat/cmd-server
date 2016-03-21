@@ -22,6 +22,7 @@ module.exports = function* toMessage(CONF, cfg) {
                 data: {
                     channel: c.channel,
                     handler: c.resource,
+                    uuid: ctx.uuid,
                     time: {
                         start: Date.now()
                     },

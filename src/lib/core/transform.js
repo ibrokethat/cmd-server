@@ -130,7 +130,11 @@ module.exports = function* (transformer, cfg, ctx, res) {
         stat: true,
         data: {
             transformer: transformer,
-            success: true
+            success: true,
+            uuid: ctx.uuid,
+            time: {
+                start: Date.now()
+            }
         }
     };
 
@@ -146,14 +150,18 @@ module.exports = function* (transformer, cfg, ctx, res) {
         }
 
         return res;
-    } catch (err) {
+    }
+    catch (err) {
 
         logMsg.level = 'error';
         logMsg.data.success = false;
         logMsg.data.error = err;
 
         throw err;
-    } finally {
+    }
+    finally {
+
+        logMsg.data.time.end = Date.now();
 
         process.emit('cmd-server:log', logMsg);
     }

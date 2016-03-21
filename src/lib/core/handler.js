@@ -15,6 +15,7 @@ module.exports = curry(function* handler(cmdName, paramsValidator, returnsValida
             cmd: cmdName,
             level: 'debug',
             success: true,
+            uuid: ctx.uuid,
             time: {
                 start: Date.now()
             },
