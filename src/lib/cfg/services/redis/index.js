@@ -50,9 +50,15 @@ module.exports = function redisConnect(CONF) {
             return JSON.parse(r);
         },
 
-        *set(k, v) {
+        *set(k, v, expire, time) {
 
-            const r = yield redis.set(k, JSON.stringify(v));
+            let args = [k, JSON.stringify(v)];
+
+            if (expire && time) {
+                args.push(expire, time);
+            }
+
+            const r = yield redis.set(...args);
 
             if (r instanceof Error) {
 
