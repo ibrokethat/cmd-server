@@ -1,6 +1,6 @@
 'use strict';
 
-const amqp = require('supermyx');
+const amqp = require('@ibrokethat/supermyx');
 const value = require('useful-value');
 const co = require('co');
 const e = require('../../core/errors');

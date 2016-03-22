@@ -1,6 +1,6 @@
 'use strict';
 
-const amqp = require('supermyx');
+const amqp = require('@ibrokethat/supermyx');
 
 module.exports = function publishAmqp(CONF) {
 
