@@ -209,7 +209,7 @@ module.exports = curry(function initApi(app, handlers, cfg, apiConf) {
                     process.emit('cmd-server:log', logMsg);
                 }).catch(function (err) {
 
-                    if (ctx.proxy) {
+                    if (ctx.proxy && !(err instanceof e.BlockedError)) {
 
                         return err;
                     }
